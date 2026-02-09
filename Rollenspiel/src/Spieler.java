@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Spieler {
 
     private String name;
@@ -18,6 +21,8 @@ public class Spieler {
 
     private double fortschrittThemenbereich5;
 
+    private List<String> medallien;
+
 
     public Spieler (String name) {
         setName(name);
@@ -25,6 +30,7 @@ public class Spieler {
         setGesamtFortschritt();
         setLevel();
         setFortschrittThemenbereiche();
+        medallien = new ArrayList<>();
     }
 
     public void setFortschrittThemenbereiche () {
@@ -119,5 +125,26 @@ public class Spieler {
 
     public int getMaxPunkte() {
         return 200;
+    }
+
+    public void setMedallienArray() {
+        if (fortschrittThemenbereich1 <= 1) {
+            medallien.add("JPG Medallie");
+        }
+        if (fortschrittThemenbereich2 <= 1) {
+            medallien.add("JPG Medallie");
+        }
+        if (fortschrittThemenbereich3 <= 1) {
+            medallien.add("JPG Medallie");
+        }
+        if (fortschrittThemenbereich4 <= 1) {
+            medallien.add("JPG Medallie");
+        }
+        if (fortschrittThemenbereich5 <= 1){
+            medallien.add("JPG Medallie");
+        }
+        if (gesamtFortschritt <= 1){
+            medallien.add("JPG Medallie");
+        }
     }
 }
