@@ -8,12 +8,71 @@ public class Spieler {
 
     private int punktekonto;
 
+    private double fortschrittThemenbereich1;
+
+    private double fortschrittThemenbereich2;
+
+    private double fortschrittThemenbereich3;
+
+    private double fortschrittThemenbereich4;
+
+    private double fortschrittThemenbereich5;
+
 
     public Spieler (String name) {
         setName(name);
         setPunktekonto(0);
         setGesamtFortschritt();
         setLevel();
+        setFortschrittThemenbereiche();
+    }
+
+    public void setFortschrittThemenbereiche () {
+        this.fortschrittThemenbereich1 = 0.0;
+        this.fortschrittThemenbereich2 = 0.0;
+        this.fortschrittThemenbereich3 = 0.0;
+        this.fortschrittThemenbereich4 = 0.0;
+        this.fortschrittThemenbereich5 = 0.0;
+    }
+
+    public double getFortschrittThemenbereich1() {
+        return fortschrittThemenbereich1;
+    }
+
+    public void setFortschrittThemenbereich1(double fortschrittThemenbereich1) {
+        this.fortschrittThemenbereich1 = fortschrittThemenbereich1;
+    }
+
+    public double getFortschrittThemenbereich2() {
+        return fortschrittThemenbereich2;
+    }
+
+    public void setFortschrittThemenbereich2(double fortschrittThemenbereich2) {
+        this.fortschrittThemenbereich2 = fortschrittThemenbereich2;
+    }
+
+    public double getFortschrittThemenbereich3() {
+        return fortschrittThemenbereich3;
+    }
+
+    public void setFortschrittThemenbereich3(double fortschrittThemenbereich3) {
+        this.fortschrittThemenbereich3 = fortschrittThemenbereich3;
+    }
+
+    public double getFortschrittThemenbereich4() {
+        return fortschrittThemenbereich4;
+    }
+
+    public void setFortschrittThemenbereich4(double fortschrittThemenbereich4) {
+        this.fortschrittThemenbereich4 = fortschrittThemenbereich4;
+    }
+
+    public double getFortschrittThemenbereich5() {
+        return fortschrittThemenbereich5;
+    }
+
+    public void setFortschrittThemenbereich5(double fortschrittThemenbereich5) {
+        this.fortschrittThemenbereich5 = fortschrittThemenbereich5;
     }
 
     public String getName() {
