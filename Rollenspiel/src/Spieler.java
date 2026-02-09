@@ -2,12 +2,15 @@ public class Spieler {
 
     private String name;
 
-    private int Punktekonto;
+    private Level level;
+
+    private double GesamtFortschritt;
 
 
-    public Spieler (String name, int Punkte) {
+    public Spieler (String name) {
         setName(name);
-        setPunktekonto(Punkte);
+        setLevel(Level.ANFÄNGER);
+        setGesamtFortschritt(0.0);
     }
 
     public String getName() {
@@ -18,11 +21,19 @@ public class Spieler {
         this.name = name;
     }
 
-    public int getPunktekonto() {
-        return Punktekonto;
+    public Level getLevel() {
+        return level;
     }
 
-    public void setPunktekonto(int punktekonto) {
-        Punktekonto = punktekonto;
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public double getGesamtFortschritt() {
+        return GesamtFortschritt;
+    }
+
+    public void setGesamtFortschritt(double gesamtFortschritt) {
+        GesamtFortschritt = gesamtFortschritt;
     }
 }
