@@ -3,5 +3,5 @@ public enum Level {
     BRONZE,
     SILBER,
     GOLD,
-    MASTER;
+    MASTER
 }
