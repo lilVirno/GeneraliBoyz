@@ -6,10 +6,13 @@ public class Spieler {
 
     private double gesamtFortschritt;
 
+    private int punktekonto;
+
 
     public Spieler (String name) {
         setName(name);
-        setGesamtFortschritt(0.0);
+        setPunktekonto(0);
+        setGesamtFortschritt();
         setLevel();
     }
 
@@ -26,13 +29,13 @@ public class Spieler {
     }
 
     public void setLevel() {
-        if (gesamtFortschritt <= 20) {
+        if (gesamtFortschritt <= 0.20) {
             this.level = Level.ANFÄNGER;
-        } else if (gesamtFortschritt <= 40) {
+        } else if (gesamtFortschritt <= 0.40) {
             this.level = Level.BRONZE;
-        } else if (gesamtFortschritt <= 60) {
+        } else if (gesamtFortschritt <= 0.60) {
             this.level = Level.SILBER;
-        } else if (gesamtFortschritt <= 80) {
+        } else if (gesamtFortschritt <= 0.80) {
             this.level = Level.GOLD;
         } else {
             this.level = Level.MASTER;
@@ -43,7 +46,19 @@ public class Spieler {
         return gesamtFortschritt;
     }
 
-    public void setGesamtFortschritt(double gesamtFortschritt) {
-        this.gesamtFortschritt = gesamtFortschritt;
+    public void setGesamtFortschritt() {
+        this.gesamtFortschritt = (double) getPunktekonto() / getMaxPunkte();
+    }
+
+    public int getPunktekonto() {
+        return punktekonto;
+    }
+
+    public void setPunktekonto(int punktekonto) {
+        this.punktekonto = punktekonto;
+    }
+
+    public int getMaxPunkte() {
+        return 200;
     }
 }
