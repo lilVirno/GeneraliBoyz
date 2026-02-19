@@ -34,11 +34,15 @@ public class Startbildschirm extends JFrame {
         JButton thema1 = new JButton("Themenbereich 1");
         JButton thema2 = new JButton("Themenbereich 2");
         JButton thema3 = new JButton("Themenbereich 3");
+        JButton thema4 = new JButton("Themenbereich 4");
+        JButton thema5 = new JButton("Themenbereich 5");
 
         panelThemen.add(auswahlLabel);
         panelThemen.add(thema1);
         panelThemen.add(thema2);
         panelThemen.add(thema3);
+        panelThemen.add(thema4);
+        panelThemen.add(thema5);
 
 // ---------- ACTION: Startbutton ----------
         startButton.addActionListener(new ActionListener() {
@@ -68,6 +72,8 @@ public class Startbildschirm extends JFrame {
         thema1.addActionListener(themaListener);
         thema2.addActionListener(themaListener);
         thema3.addActionListener(themaListener);
+        thema4.addActionListener(themaListener);
+        thema5.addActionListener(themaListener);
 
 // ---------- Startscreen zunächst anzeigen ----------
         setContentPane(panelStart);
