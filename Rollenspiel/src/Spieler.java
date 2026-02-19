@@ -128,23 +128,23 @@ public class Spieler {
     }
 
     public void setMedallienArray() {
-        if (fortschrittThemenbereich1 <= 1) {
-            medallien.add("JPG Medallie");
+        if (fortschrittThemenbereich1 == 1) {
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\BlauMedallie.jpg");
         }
-        if (fortschrittThemenbereich2 <= 1) {
-            medallien.add("JPG Medallie");
+        if (fortschrittThemenbereich2 == 1) {
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\GrünMedallie.jpg");
         }
-        if (fortschrittThemenbereich3 <= 1) {
-            medallien.add("JPG Medallie");
+        if (fortschrittThemenbereich3 == 1) {
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\LilaMedallie.jpg");
         }
-        if (fortschrittThemenbereich4 <= 1) {
-            medallien.add("JPG Medallie");
+        if (fortschrittThemenbereich4 == 1) {
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\olivgrünMedallie.jpg");
         }
-        if (fortschrittThemenbereich5 <= 1){
-            medallien.add("JPG Medallie");
+        if (fortschrittThemenbereich5 == 1){
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\RotMedallie.jpg");
         }
-        if (gesamtFortschritt <= 1){
-            medallien.add("JPG Medallie");
+        if (gesamtFortschritt == 1){
+            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\EndbossMedallie.jpg");
         }
     }
 }
