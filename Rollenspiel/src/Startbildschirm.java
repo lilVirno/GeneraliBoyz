@@ -1,90 +1,138 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
-public class Startbildschirm extends JFrame {
+public class Startbildschirm extends Application {
 
-    public Startbildschirm() {
-        setTitle("Gamification – Lernspiel");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
-        setLocationRelativeTo(null); // zentrieren
+    @Override
+    public void start(Stage stage) {
 
-// ---------- STARTBILDSCHIRM PANEL ----------
-        JPanel panelStart = new JPanel();
-        panelStart.setLayout(new BorderLayout());
+        // ---------- STARTBILDSCHIRM ----------
+        BorderPane startPane = new BorderPane();
+        startPane.setStyle("-fx-background-color: #f5f5f5;");
 
-        JLabel titel = new JLabel("Willkommen zum Lernspiel!", SwingConstants.CENTER);
-        titel.setFont(new Font("Arial", Font.BOLD, 26));
+        Label titel = new Label("Willkommen zum Lernspiel!");
+        titel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold;");
 
-        JButton startButton = new JButton("Start");
-        startButton.setFont(new Font("Arial", Font.PLAIN, 22));
+        Button startButton = new Button("Start");
+        startButton.setStyle(buttonMain());
 
-        panelStart.add(titel, BorderLayout.CENTER);
-        panelStart.add(startButton, BorderLayout.SOUTH);
+        BorderPane.setAlignment(titel, Pos.CENTER);
+        BorderPane.setMargin(titel, new Insets(40, 0, 20, 0));
 
-// ---------- THEMENBEREICHE PANEL ----------
-        JPanel panelThemen = new JPanel();
-        panelThemen.setLayout(new GridLayout(3, 1, 10, 10));
+        VBox startVBox = new VBox(titel, startButton);
+        startVBox.setAlignment(Pos.CENTER);
+        startVBox.setSpacing(40);
 
-        JLabel auswahlLabel = new JLabel("Wähle einen Themenbereich:", SwingConstants.CENTER);
-        auswahlLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        startPane.setCenter(startVBox);
 
-        JButton thema1 = new JButton("Themenbereich 1");
-        JButton thema2 = new JButton("Themenbereich 2");
-        JButton thema3 = new JButton("Themenbereich 3");
-        JButton thema4 = new JButton("Themenbereich 4");
-        JButton thema5 = new JButton("Themenbereich 5");
+        Scene startScene = new Scene(startPane, 700, 450);
 
-        panelThemen.add(auswahlLabel);
-        panelThemen.add(thema1);
-        panelThemen.add(thema2);
-        panelThemen.add(thema3);
-        panelThemen.add(thema4);
-        panelThemen.add(thema5);
+        // ---------- THEMENBEREICHE ----------
+        VBox themenVBox = new VBox();
+        themenVBox.setAlignment(Pos.TOP_CENTER);
+        themenVBox.setSpacing(15);
+        themenVBox.setPadding(new Insets(30, 0, 0, 0));
+        themenVBox.setStyle("-fx-background-color: #f5f5f5;");
 
-// ---------- ACTION: Startbutton ----------
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setContentPane(panelThemen);
-                revalidate();
-                repaint();
-            }
-        });
+        Label auswahlLabel = new Label("Wähle einen Themenbereich:");
+        auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-// ---------- ACTION: Themenbereiche öffnen ----------
-        ActionListener themaListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JButton btn = (JButton) e.getSource();
-                String thema = btn.getText();
-                JOptionPane.showMessageDialog(
-                        Startbildschirm.this,
-                        "Themenbereich geöffnet: " + thema,
-                        "Thema",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            }
-        };
+        Button thema1 = createThemeButton("Themenbereich 1");
+        Button thema2 = createThemeButton("Themenbereich 2");
+        Button thema3 = createThemeButton("Themenbereich 3");
+        Button thema4 = createThemeButton("Themenbereich 4");
+        Button thema5 = createThemeButton("Themenbereich 5");
 
-        thema1.addActionListener(themaListener);
-        thema2.addActionListener(themaListener);
-        thema3.addActionListener(themaListener);
-        thema4.addActionListener(themaListener);
-        thema5.addActionListener(themaListener);
+        themenVBox.getChildren().addAll(
+                auswahlLabel, thema1, thema2, thema3, thema4, thema5
+        );
 
-// ---------- Startscreen zunächst anzeigen ----------
-        setContentPane(panelStart);
+        Scene themenScene = new Scene(themenVBox, 700, 450);
+
+        // ---------- ACTION: Start ----------
+        startButton.setOnAction(e -> stage.setScene(themenScene));
+
+        // ---------- ACTION: Themen ----------
+        thema1.setOnAction(e -> showTheme(thema1.getText()));
+        thema2.setOnAction(e -> showTheme(thema2.getText()));
+        thema3.setOnAction(e -> showTheme(thema3.getText()));
+        thema4.setOnAction(e -> showTheme(thema4.getText()));
+        thema5.setOnAction(e -> showTheme(thema5.getText()));
+
+        // ---------- Anzeigen ----------
+        stage.setScene(startScene);
+        stage.setTitle("Gamification – Lernspiel");
+        stage.show();
+    }
+
+    // ---------- Button-Stil (Start-Button) ----------
+    private String buttonMain() {
+        return "-fx-font-size: 20px;"
+                + "-fx-background-color: #3498db;"
+                + "-fx-text-fill: white;"
+                + "-fx-padding: 10px 24px;"
+                + "-fx-background-radius: 10;";
+    }
+
+    // ---------- Buttons für Themenbereiche ----------
+    private Button createThemeButton(String text) {
+        Button btn = new Button(text);
+        btn.setStyle(
+                "-fx-font-size: 18px;"
+                        + "-fx-background-color: white;"
+                        + "-fx-padding: 10px 20px;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
+                        + "-fx-border-color: #d0d0d0;"
+                        + "-fx-border-width: 2;"
+        );
+
+        btn.setOnMouseEntered(e ->
+                btn.setStyle(
+                        "-fx-font-size: 18px;"
+                                + "-fx-background-color: #eaeaea;"
+                                + "-fx-padding: 10px 20px;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-border-color: #d0d0d0;"
+                                + "-fx-border-width: 2;"
+                )
+        );
+
+        btn.setOnMouseExited(e ->
+                btn.setStyle(
+                        "-fx-font-size: 18px;"
+                                + "-fx-background-color: white;"
+                                + "-fx-padding: 10px 20px;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-border-color: #d0d0d0;"
+                                + "-fx-border-width: 2;"
+                )
+        );
+
+        return btn;
+    }
+
+    // ---------- Popup ----------
+    private void showTheme(String thema) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Thema");
+        alert.setContentText("Themenbereich geöffnet: " + thema);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Startbildschirm gui = new Startbildschirm();
-            gui.setVisible(true);
-        });
+        launch();
     }
 }
-
-
