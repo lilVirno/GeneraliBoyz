@@ -23,7 +23,7 @@ import java.util.List;
 public class Startbildschirm extends Application {
 
     private static final String ABSOLUTE_PATH =
-            "U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\Designer.png";
+            "Rollenspiel/src/resources/Designer.png";
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 450;
