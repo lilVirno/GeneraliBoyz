@@ -88,6 +88,8 @@ public class Startbildschirm extends Application {
         VBox overlayBox = new VBox(12, titel, startButton);
         overlayBox.setPadding(new Insets(16));
         overlayBox.setAlignment(Pos.CENTER);
+        titel.setTranslateY(-10);
+        startButton.setTranslateY(100);
 
         Region overlayBackground = new Region();
         overlayBackground.setStyle("-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;");
