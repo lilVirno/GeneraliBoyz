@@ -1,3 +1,5 @@
+package backend;
+
 import enums.Fragenkategorie;
 import enums.Themenbereich;
 
@@ -55,5 +57,13 @@ public class Frage {
             case 4 -> Fragenkategorie.MULTIPLE_CHOICE;
             default -> null;
         };
+    }
+
+    public String getKorrekteAntwort() {
+        return antworten.stream()
+                .filter(Antwort::isRichtig)
+                .map(Antwort::getAntwort)
+                .findFirst()
+                .orElse("Keine korrekte backend.Antwort hinterlegt.");
     }
 }

@@ -1,3 +1,5 @@
+package backend;
+
 public class Antwort {
     private boolean richtig;
     private String antwort;

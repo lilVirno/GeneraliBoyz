@@ -1,0 +1,45 @@
+package gui;
+
+import backend.Frage;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+public class LueckentextGUI extends BorderPane {
+
+    public LueckentextGUI(Frage frage) {
+
+        Label frageLabel = new Label(frage.getFrage());
+        frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        setTop(frageLabel);
+        BorderPane.setAlignment(frageLabel, Pos.CENTER);
+        BorderPane.setMargin(frageLabel, new Insets(20, 0, 20, 0));
+
+        TextField eingabe = new TextField();
+        eingabe.setPromptText("Antwort eingeben...");
+        eingabe.setStyle("-fx-font-size: 18px;");
+        setCenter(eingabe);
+        BorderPane.setMargin(eingabe, new Insets(20));
+
+        Button pruefen = new Button("Prüfen");
+        pruefen.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        pruefen.setOnAction(e -> {
+            String korrekt = frage.getKorrekteAntwort();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+
+            if (eingabe.getText().trim().equalsIgnoreCase(korrekt)) {
+                alert.setContentText("Richtig!");
+            } else {
+                alert.setContentText("Falsch!");
+            }
+
+            alert.showAndWait();
+        });
+
+        setBottom(pruefen);
+        BorderPane.setAlignment(pruefen, Pos.CENTER);
+        BorderPane.setMargin(pruefen, new Insets(20));
+    }
+}
