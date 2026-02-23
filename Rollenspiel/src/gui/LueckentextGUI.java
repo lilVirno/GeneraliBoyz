@@ -1,33 +1,45 @@
 package gui;
 
 import backend.Frage;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
-import javax.swing.*;
-import java.awt.*;
-
-public class LueckentextGUI extends JPanel {
+public class LueckentextGUI extends BorderPane {
 
     public LueckentextGUI(Frage frage) {
 
-        setLayout(new BorderLayout());
+        Label frageLabel = new Label(frage.getFrage());
+        frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        setTop(frageLabel);
+        BorderPane.setAlignment(frageLabel, Pos.CENTER);
+        BorderPane.setMargin(frageLabel, new Insets(20, 0, 20, 0));
 
-        JLabel frageLabel = new JLabel(frage.getFrage(), SwingConstants.CENTER);
-        frageLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(frageLabel, BorderLayout.NORTH);
+        TextField eingabe = new TextField();
+        eingabe.setPromptText("Antwort eingeben...");
+        eingabe.setStyle("-fx-font-size: 18px;");
+        setCenter(eingabe);
+        BorderPane.setMargin(eingabe, new Insets(20));
 
-        JTextField eingabe = new JTextField();
-        add(eingabe, BorderLayout.CENTER);
-
-        JButton pruefen = new JButton("Prüfen");
-        pruefen.addActionListener(e -> {
+        Button pruefen = new Button("Prüfen");
+        pruefen.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        pruefen.setOnAction(e -> {
             String korrekt = frage.getKorrekteAntwort();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+
             if (eingabe.getText().trim().equalsIgnoreCase(korrekt)) {
-                JOptionPane.showMessageDialog(this, "Richtig!");
+                alert.setContentText("Richtig!");
             } else {
-                JOptionPane.showMessageDialog(this, "Falsch!");
+                alert.setContentText("Falsch!");
             }
+
+            alert.showAndWait();
         });
 
-        add(pruefen, BorderLayout.SOUTH);
+        setBottom(pruefen);
+        BorderPane.setAlignment(pruefen, Pos.CENTER);
+        BorderPane.setMargin(pruefen, new Insets(20));
     }
 }

@@ -2,115 +2,262 @@ package gui;
 
 import backend.Frage;
 import backend.FragenRepository;
-import enums.Fragenkategorie;
 import enums.Themenbereich;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
+import javafx.animation.*;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.File;
 import java.util.List;
 
-public class Startbildschirm extends JFrame {
+public class Startbildschirm extends Application {
 
-    public Startbildschirm() {
-        setTitle("Gamification – Lernspiel");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
-        setLocationRelativeTo(null); // zentrieren
+    private static final String ABSOLUTE_PATH =
+            "U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\Designer.png";
 
-// ---------- STARTBILDSCHIRM PANEL ----------
-        JPanel panelStart = new JPanel();
-        panelStart.setLayout(new BorderLayout());
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 450;
+    private static final double SPLASH_SECONDS = 2.5;
 
-        JLabel titel = new JLabel("Willkommen zum Lernspiel!", SwingConstants.CENTER);
-        titel.setFont(new Font("Arial", Font.BOLD, 26));
+    private static final String SOLID_BG_HEX = "#2EA3A3";
 
-        JButton startButton = new JButton("Start");
-        startButton.setFont(new Font("Arial", Font.PLAIN, 22));
+    private Scene startScene;
+    private Scene themenScene;
 
-        panelStart.add(titel, BorderLayout.CENTER);
-        panelStart.add(startButton, BorderLayout.SOUTH);
+    @Override
+    public void start(Stage stage) {
 
-        // ---------- ACTION: Themenbereiche öffnen ----------
-        ActionListener themaListener = e -> {
-            JButton btn = (JButton) e.getSource();
-            String text = btn.getText();
-            // passenden Enum finden
-            Themenbereich thema = Arrays.stream(Themenbereich.values())
-                    .filter(t -> t.name().equals(text))
-                    .findFirst()
-                    .orElse(null);
-            if (thema == null) { JOptionPane.showMessageDialog(this, "Unbekanntes Thema: " + text); return; }
-            // Fragen laden
-            List<Frage> fragen = FragenRepository.getAlleFragen().stream()
-                    .filter(f -> f.getThemenbereich() == thema)
-                    .toList();
-            if (fragen.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Keine Fragen für dieses Thema gefunden.");
-                return;
-            }
-            oeffneFrageGUI(fragen.get(0));
-        };
+        Image bgImage = new Image(
+                new File(ABSOLUTE_PATH).toURI().toString(),
+                WIDTH, HEIGHT, true, true
+        );
 
-// ---------- THEMENBEREICHE PANEL ----------
-        JPanel panelThemen = new JPanel(new GridLayout(0, 1, 10, 10));
-        //panelThemen.setLayout(new GridLayout(3, 1, 10, 10));
+        StackPane splashRoot = createSplashRoot(bgImage);
+        Scene splashScene = new Scene(splashRoot, WIDTH, HEIGHT, Color.BLACK);
 
-        JLabel auswahlLabel = new JLabel("Wähle einen Themenbereich:", SwingConstants.CENTER);
-        auswahlLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        panelThemen.add(auswahlLabel);
+        StackPane startRoot = createStartRoot(bgImage);
+        startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
-        for (Themenbereich tb : Themenbereich.values()) {
-            JButton btn = new JButton(tb.name());
-            btn.setFont(new Font("Arial", Font.PLAIN, 20));
-            btn.addActionListener(themaListener);
-            panelThemen.add(btn);
-        }
+        VBox themenVBox = createThemenRoot();
+        themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
 
-// ---------- ACTION: Startbutton ----------
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setContentPane(panelThemen);
-                revalidate();
-                repaint();
-            }
+        stage.setTitle("Gamification – Lernspiel");
+        stage.setScene(splashScene);
+        stage.show();
+
+        runSplashSequence(stage, splashScene, startScene);
+    }
+
+    // ---------- Splash ----------
+    private StackPane createSplashRoot(Image bgImage) {
+        ImageView bg = new ImageView(bgImage);
+        bg.setPreserveRatio(true);
+        bg.setSmooth(true);
+
+        StackPane root = new StackPane(bg);
+        root.setStyle("-fx-background-color: black;");
+
+        root.widthProperty().addListener((obs, oldVal, newVal) -> bg.setFitWidth(newVal.doubleValue()));
+        root.heightProperty().addListener((obs, oldVal, newVal) -> bg.setFitHeight(newVal.doubleValue()));
+
+        return root;
+    }
+
+    // ---------- Startscreen ----------
+    private StackPane createStartRoot(Image bgImage) {
+        ImageView bg = new ImageView(bgImage);
+        bg.setPreserveRatio(true);
+        bg.setSmooth(true);
+
+        Label titel = new Label("Willkommen zum Lernspiel!");
+        titel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        Button startButton = new Button("Start");
+        startButton.setStyle(buttonMain());
+
+        VBox overlayBox = new VBox(12, titel, startButton);
+        overlayBox.setPadding(new Insets(16));
+        overlayBox.setAlignment(Pos.CENTER);
+
+        Region overlayBackground = new Region();
+        overlayBackground.setStyle("-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;");
+
+        StackPane overlay = new StackPane(overlayBackground, overlayBox);
+        overlay.setMaxWidth(420);
+
+        StackPane root = new StackPane(bg);
+        StackPane.setAlignment(overlay, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(overlay, new Insets(0, 0, 48, 0));
+        root.getChildren().add(overlay);
+
+        root.widthProperty().addListener((o, ov, nv) -> bg.setFitWidth(nv.doubleValue()));
+        root.heightProperty().addListener((o, ov, nv) -> bg.setFitHeight(nv.doubleValue()));
+
+        startButton.setOnAction(e -> {
+            Stage stage = (Stage) root.getScene().getWindow();
+
+            FadeTransition out = new FadeTransition(Duration.millis(300), root);
+            out.setFromValue(1);
+            out.setToValue(0);
+            out.setOnFinished(ev -> {
+                stage.setScene(themenScene);
+                FadeTransition in = new FadeTransition(Duration.millis(300), themenScene.getRoot());
+                in.setFromValue(0);
+                in.setToValue(1);
+                in.play();
+            });
+            out.play();
         });
 
-// ---------- Startscreen zunächst anzeigen ----------
-        setContentPane(panelStart);
+        return root;
+    }
+
+    // ---------- Splash Ablauf ----------
+    private void runSplashSequence(Stage stage, Scene splashScene, Scene nextScene) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(SPLASH_SECONDS));
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(600), splashScene.getRoot());
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+
+        SequentialTransition seq = new SequentialTransition(pause, fadeOut);
+        seq.setOnFinished(e -> {
+            stage.setScene(nextScene);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(500), nextScene.getRoot());
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+            fadeIn.play();
+        });
+        seq.play();
+    }
+
+    // ---------- Themenbereiche ----------
+    private VBox createThemenRoot() {
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.setSpacing(15);
+        vbox.setPadding(new Insets(30, 0, 0, 0));
+
+        vbox.setBackground(new Background(new BackgroundFill(
+                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+        )));
+
+        Label auswahlLabel = new Label("Wähle einen Themenbereich:");
+        auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        vbox.getChildren().add(auswahlLabel);
+
+        for (Themenbereich tb : Themenbereich.values()) {
+            Button btn = createThemeButton(tb.name());
+            btn.setOnAction(e -> ladeFragenUndÖffne(tb));
+            vbox.getChildren().add(btn);
+        }
+
+        return vbox;
+    }
+
+    // ---------- Logik aus Swing: Fragen laden ----------
+    private void ladeFragenUndÖffne(Themenbereich thema) {
+        List<Frage> fragen = FragenRepository.getAlleFragen().stream()
+                .filter(f -> f.getThemenbereich() == thema)
+                .toList();
+
+        if (fragen.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText("Keine Fragen für dieses Thema gefunden.");
+            alert.showAndWait();
+            return;
+        }
+
+        öffneFrageGUI(fragen.get(0));
+    }
+
+    // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
+    private void öffneFrageGUI(Frage frage) {
+
+        Pane panel;
+
+        switch (frage.getFragenkategorie()) {
+            case MULTIPLE_CHOICE -> panel = new MultipleChoiceGUI(frage);
+            case WAHR_FALSCH -> panel = new WahrFalschGUI(frage);
+            case LUECKENTEXT -> panel = new LueckentextGUI(frage);
+            default -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText(null);
+                alert.setContentText("Unbekannte Fragenkategorie!");
+                alert.showAndWait();
+                return;
+            }
+        }
+
+        Stage frageStage = new Stage();
+        frageStage.setTitle("Frage");
+        frageStage.setScene(new Scene(panel, 600, 400));
+        frageStage.show();
+    }
+
+    // ---------- Styling ----------
+    private String buttonMain() {
+        return "-fx-font-size: 20px;"
+                + "-fx-background-color: #3498db;"
+                + "-fx-text-fill: white;"
+                + "-fx-padding: 10px 44px;"
+                + "-fx-background-radius: 10;";
+    }
+
+    private Button createThemeButton(String text) {
+        Button btn = new Button(text);
+        btn.setStyle(
+                "-fx-font-size: 18px;"
+                        + "-fx-background-color: rgba(255,255,255,0.90);"
+                        + "-fx-text-fill: #1f2937;"
+                        + "-fx-padding: 10px 20px;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
+                        + "-fx-border-color: rgba(255,255,255,0.35);"
+                        + "-fx-border-width: 2;"
+        );
+
+        btn.setOnMouseEntered(e ->
+                btn.setStyle(
+                        "-fx-font-size: 18px;"
+                                + "-fx-background-color: rgba(255,255,255,0.98);"
+                                + "-fx-text-fill: #111827;"
+                                + "-fx-padding: 10px 20px;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-border-color: rgba(255,255,255,0.6);"
+                                + "-fx-border-width: 2;"
+                )
+        );
+
+        btn.setOnMouseExited(e ->
+                btn.setStyle(
+                        "-fx-font-size: 18px;"
+                                + "-fx-background-color: rgba(255,255,255,0.90);"
+                                + "-fx-text-fill: #1f2937;"
+                                + "-fx-padding: 10px 20px;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-border-radius: 10;"
+                                + "-fx-border-color: rgba(255,255,255,0.35);"
+                                + "-fx-border-width: 2;"
+                )
+        );
+
+        return btn;
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Startbildschirm gui = new Startbildschirm();
-            gui.setVisible(true);
-        });
-    }
-
-    private void oeffneFrageGUI(Frage frage) {
-
-        JPanel panel;
-
-        switch (frage.getFragenkategorie()) {
-            case Fragenkategorie.MULTIPLE_CHOICE -> panel = new MultipleChoiceGUI(frage);
-            case Fragenkategorie.WAHR_FALSCH -> panel = new WahrFalschGUI(frage);
-            case Fragenkategorie.LUECKENTEXT -> panel = new LueckentextGUI(frage);
-            default -> {
-                JOptionPane.showMessageDialog(this, "Unbekannte Fragenkategorie!");
-                return;
-            }
-        }
-
-        JFrame frame = new JFrame("backend.Frage");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setContentPane(panel);
-        frame.setVisible(true);
+        launch();
     }
 }
-
-
