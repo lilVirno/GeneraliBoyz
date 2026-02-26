@@ -147,16 +147,49 @@ public class Startbildschirm extends Application {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.setSpacing(15);
-        vbox.setPadding(new Insets(30, 0, 0, 0));
+        // Padding oben etwas verringern, da der Header nun Platz einnimmt
+        vbox.setPadding(new Insets(10, 0, 0, 0));
 
         vbox.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
+        // --- Header mit Home-Button ---
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(0, 20, 0, 20));
+
+        Button homeBtn = new Button("🏠 Home");
+        // Ein schlichtes Styling für den Home-Button
+        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+
+        // Positionierung oben rechts im AnchorPane
+        AnchorPane.setTopAnchor(homeBtn, 10.0);
+        AnchorPane.setRightAnchor(homeBtn, 10.0);
+
+        homeBtn.setOnAction(e -> {
+            // Zurück zur Startscene mit einem kleinen Fade
+            FadeTransition ft = new FadeTransition(Duration.millis(300), themenScene.getRoot());
+            ft.setFromValue(1.0);
+            ft.setToValue(0.0);
+            ft.setOnFinished(ev -> {
+                Stage stage = (Stage) vbox.getScene().getWindow();
+                stage.setScene(startScene);
+                startScene.getRoot().setOpacity(0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            });
+            ft.play();
+        });
+
+        header.getChildren().add(homeBtn);
+        // ------------------------------
+
         Label auswahlLabel = new Label("Wähle einen Themenbereich:");
         auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        vbox.getChildren().add(auswahlLabel);
+        // Zuerst den Header, dann das Label und die Buttons hinzufügen
+        vbox.getChildren().addAll(header, auswahlLabel);
 
         for (Themenbereich tb : Themenbereich.values()) {
             Button btn = createThemeButton(tb.name());
@@ -186,26 +219,43 @@ public class Startbildschirm extends Application {
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
     private void öffneFrageGUI(Frage frage) {
+        VBox frageRoot = new VBox(20);
+        frageRoot.setAlignment(Pos.CENTER);
+        frageRoot.setPadding(new Insets(40));
 
-        Pane panel;
+        // 1. Hintergrund anpassen (Passend zum Themen-Bildschirm)
+        frageRoot.setBackground(new Background(new BackgroundFill(
+                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+        )));
 
+        // 2. Frage-Inhalt laden
+        Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
-            case MULTIPLE_CHOICE -> panel = new MultipleChoiceGUI(frage);
-            case WAHR_FALSCH -> panel = new WahrFalschGUI(frage);
-            case LUECKENTEXT -> panel = new LueckentextGUI(frage);
-            default -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText(null);
-                alert.setContentText("Unbekannte Fragenkategorie!");
-                alert.showAndWait();
-                return;
-            }
+            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage);
+            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage);
+            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage);
+            default -> { return; }
         }
 
-        Stage frageStage = new Stage();
-        frageStage.setTitle("Frage");
-        frageStage.setScene(new Scene(panel, 600, 400));
-        frageStage.show();
+        // Damit das Panel der Frage durchsichtig ist und unser Hintergrund wirkt
+        spezifischesPanel.setStyle("-fx-background-color: transparent;");
+
+        // 3. Zurück-Button (oben links oder unten)
+        Button backBtn = new Button("← Zurück");
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-cursor: hand;");
+        backBtn.setOnAction(e -> {
+            Stage stage = (Stage) frageRoot.getScene().getWindow();
+            stage.setScene(themenScene);
+        });
+
+        // Alles zusammenfügen
+        frageRoot.getChildren().addAll(backBtn, spezifischesPanel);
+        VBox.setVgrow(spezifischesPanel, Priority.ALWAYS);
+
+        // Szene im selben Fenster setzen
+        Stage stage = (Stage) themenScene.getWindow();
+        Scene scene = new Scene(frageRoot, WIDTH, HEIGHT);
+        stage.setScene(scene);
     }
 
     // ---------- Styling ----------
