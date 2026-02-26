@@ -22,21 +22,18 @@ import java.util.List;
 
 public class Startbildschirm extends Application {
 
-    private static final String ABSOLUTE_PATH =
-            "Rollenspiel/src/resources/Designer.png";
-
+    private static final String ABSOLUTE_PATH = "Rollenspiel/src/resources/Designer.png";
     private static final int WIDTH = 700;
     private static final int HEIGHT = 450;
     private static final double SPLASH_SECONDS = 2.5;
-
     private static final String SOLID_BG_HEX = "#2EA3A3";
 
     private Scene startScene;
     private Scene themenScene;
+    private Scene profilScene; // Neu: Szene für das Profil
 
     @Override
     public void start(Stage stage) {
-
         Image bgImage = new Image(
                 new File(ABSOLUTE_PATH).toURI().toString(),
                 WIDTH, HEIGHT, true, true
@@ -51,6 +48,10 @@ public class Startbildschirm extends Application {
         VBox themenVBox = createThemenRoot();
         themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
 
+        // Neu: Profilseite initialisieren
+        VBox profilVBox = createProfilRoot();
+        profilScene = new Scene(profilVBox, WIDTH, HEIGHT);
+
         stage.setTitle("Gamification – Lernspiel");
         stage.setScene(splashScene);
         stage.show();
@@ -63,13 +64,10 @@ public class Startbildschirm extends Application {
         ImageView bg = new ImageView(bgImage);
         bg.setPreserveRatio(true);
         bg.setSmooth(true);
-
         StackPane root = new StackPane(bg);
         root.setStyle("-fx-background-color: black;");
-
         root.widthProperty().addListener((obs, oldVal, newVal) -> bg.setFitWidth(newVal.doubleValue()));
         root.heightProperty().addListener((obs, oldVal, newVal) -> bg.setFitHeight(newVal.doubleValue()));
-
         return root;
     }
 
@@ -107,7 +105,6 @@ public class Startbildschirm extends Application {
 
         startButton.setOnAction(e -> {
             Stage stage = (Stage) root.getScene().getWindow();
-
             FadeTransition out = new FadeTransition(Duration.millis(300), root);
             out.setFromValue(1);
             out.setToValue(0);
@@ -147,48 +144,40 @@ public class Startbildschirm extends Application {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.setSpacing(15);
-        // Padding oben etwas verringern, da der Header nun Platz einnimmt
         vbox.setPadding(new Insets(10, 0, 0, 0));
-
         vbox.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        // --- Header mit Home-Button ---
+        // --- Header mit Home- und Profil-Button ---
         AnchorPane header = new AnchorPane();
         header.setPadding(new Insets(0, 20, 0, 20));
 
         Button homeBtn = new Button("🏠 Home");
-        // Ein schlichtes Styling für den Home-Button
-        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
 
-        // Positionierung oben rechts im AnchorPane
+        // NEU: Profil Button
+        Button profilBtn = new Button("👤 Profil");
+        profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+
+        // Positionierung
         AnchorPane.setTopAnchor(homeBtn, 10.0);
         AnchorPane.setRightAnchor(homeBtn, 10.0);
 
-        homeBtn.setOnAction(e -> {
-            // Zurück zur Startscene mit einem kleinen Fade
-            FadeTransition ft = new FadeTransition(Duration.millis(300), themenScene.getRoot());
-            ft.setFromValue(1.0);
-            ft.setToValue(0.0);
-            ft.setOnFinished(ev -> {
-                Stage stage = (Stage) vbox.getScene().getWindow();
-                stage.setScene(startScene);
-                startScene.getRoot().setOpacity(0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
-                fadeIn.setToValue(1.0);
-                fadeIn.play();
-            });
-            ft.play();
-        });
+        AnchorPane.setTopAnchor(profilBtn, 10.0);
+        AnchorPane.setRightAnchor(profilBtn, 100.0); // Etwas links vom Home-Button
 
-        header.getChildren().add(homeBtn);
+        homeBtn.setOnAction(e -> switchSceneWithFade(themenScene, startScene));
+
+        // Aktion für Profil-Button
+        profilBtn.setOnAction(e -> switchSceneWithFade(themenScene, profilScene));
+
+        header.getChildren().addAll(homeBtn, profilBtn);
         // ------------------------------
 
         Label auswahlLabel = new Label("Wähle einen Themenbereich:");
         auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        // Zuerst den Header, dann das Label und die Buttons hinzufügen
         vbox.getChildren().addAll(header, auswahlLabel);
 
         for (Themenbereich tb : Themenbereich.values()) {
@@ -198,6 +187,44 @@ public class Startbildschirm extends Application {
         }
 
         return vbox;
+    }
+
+    // ---------- NEU: Profil-Bildschirm (Leer) ----------
+    private VBox createProfilRoot() {
+        VBox vbox = new VBox(20);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setBackground(new Background(new BackgroundFill(
+                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+        )));
+
+        Label info = new Label("Dein Profil");
+        info.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        Label placeholder = new Label("(Hier werden bald deine Statistiken angezeigt)");
+        placeholder.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-opacity: 0.7;");
+
+        Button backBtn = new Button("← Zurück zur Auswahl");
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-cursor: hand;");
+        backBtn.setOnAction(e -> switchSceneWithFade(profilScene, themenScene));
+
+        vbox.getChildren().addAll(info, placeholder, backBtn);
+        return vbox;
+    }
+
+    // Hilfsmethode für den Szenenwechsel mit Fade
+    private void switchSceneWithFade(Scene current, Scene next) {
+        FadeTransition ft = new FadeTransition(Duration.millis(300), current.getRoot());
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setOnFinished(ev -> {
+            Stage stage = (Stage) current.getWindow();
+            stage.setScene(next);
+            next.getRoot().setOpacity(0);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(300), next.getRoot());
+            fadeIn.setToValue(1.0);
+            fadeIn.play();
+        });
+        ft.play();
     }
 
     // ---------- Logik aus Swing: Fragen laden ----------
@@ -213,22 +240,17 @@ public class Startbildschirm extends Application {
             alert.showAndWait();
             return;
         }
-
         öffneFrageGUI(fragen.get(0));
     }
 
-    // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
     private void öffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
         frageRoot.setAlignment(Pos.CENTER);
         frageRoot.setPadding(new Insets(40));
-
-        // 1. Hintergrund anpassen (Passend zum Themen-Bildschirm)
         frageRoot.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        // 2. Frage-Inhalt laden
         Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
             case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage);
@@ -237,10 +259,8 @@ public class Startbildschirm extends Application {
             default -> { return; }
         }
 
-        // Damit das Panel der Frage durchsichtig ist und unser Hintergrund wirkt
         spezifischesPanel.setStyle("-fx-background-color: transparent;");
 
-        // 3. Zurück-Button (oben links oder unten)
         Button backBtn = new Button("← Zurück");
         backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-cursor: hand;");
         backBtn.setOnAction(e -> {
@@ -248,11 +268,9 @@ public class Startbildschirm extends Application {
             stage.setScene(themenScene);
         });
 
-        // Alles zusammenfügen
         frageRoot.getChildren().addAll(backBtn, spezifischesPanel);
         VBox.setVgrow(spezifischesPanel, Priority.ALWAYS);
 
-        // Szene im selben Fenster setzen
         Stage stage = (Stage) themenScene.getWindow();
         Scene scene = new Scene(frageRoot, WIDTH, HEIGHT);
         stage.setScene(scene);
@@ -260,52 +278,17 @@ public class Startbildschirm extends Application {
 
     // ---------- Styling ----------
     private String buttonMain() {
-        return "-fx-font-size: 20px;"
-                + "-fx-background-color: #3498db;"
-                + "-fx-text-fill: white;"
-                + "-fx-padding: 10px 44px;"
-                + "-fx-background-radius: 10;";
+        return "-fx-font-size: 20px;" + "-fx-background-color: #3498db;" + "-fx-text-fill: white;" + "-fx-padding: 10px 44px;" + "-fx-background-radius: 10;";
     }
 
     private Button createThemeButton(String text) {
         Button btn = new Button(text);
-        btn.setStyle(
-                "-fx-font-size: 18px;"
-                        + "-fx-background-color: rgba(255,255,255,0.90);"
-                        + "-fx-text-fill: #1f2937;"
-                        + "-fx-padding: 10px 20px;"
-                        + "-fx-background-radius: 10;"
-                        + "-fx-border-radius: 10;"
-                        + "-fx-border-color: rgba(255,255,255,0.35);"
-                        + "-fx-border-width: 2;"
-        );
+        String idle = "-fx-font-size: 18px; -fx-background-color: rgba(255,255,255,0.90); -fx-text-fill: #1f2937; -fx-padding: 10px 20px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(255,255,255,0.35); -fx-border-width: 2;";
+        String hover = "-fx-font-size: 18px; -fx-background-color: rgba(255,255,255,0.98); -fx-text-fill: #111827; -fx-padding: 10px 20px; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(255,255,255,0.6); -fx-border-width: 2;";
 
-        btn.setOnMouseEntered(e ->
-                btn.setStyle(
-                        "-fx-font-size: 18px;"
-                                + "-fx-background-color: rgba(255,255,255,0.98);"
-                                + "-fx-text-fill: #111827;"
-                                + "-fx-padding: 10px 20px;"
-                                + "-fx-background-radius: 10;"
-                                + "-fx-border-radius: 10;"
-                                + "-fx-border-color: rgba(255,255,255,0.6);"
-                                + "-fx-border-width: 2;"
-                )
-        );
-
-        btn.setOnMouseExited(e ->
-                btn.setStyle(
-                        "-fx-font-size: 18px;"
-                                + "-fx-background-color: rgba(255,255,255,0.90);"
-                                + "-fx-text-fill: #1f2937;"
-                                + "-fx-padding: 10px 20px;"
-                                + "-fx-background-radius: 10;"
-                                + "-fx-border-radius: 10;"
-                                + "-fx-border-color: rgba(255,255,255,0.35);"
-                                + "-fx-border-width: 2;"
-                )
-        );
-
+        btn.setStyle(idle);
+        btn.setOnMouseEntered(e -> btn.setStyle(hover));
+        btn.setOnMouseExited(e -> btn.setStyle(idle));
         return btn;
     }
 
