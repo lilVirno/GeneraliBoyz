@@ -23,7 +23,11 @@ public class LueckentextGUI extends BorderPane {
         BorderPane.setMargin(eingabe, new Insets(20));
 
         Button pruefen = new Button("Prüfen");
-        pruefen.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        pruefen.setStyle("-fx-font-size: 20px;"
+                        + "-fx-background-color: #Ffffff;"
+                        + "-fx-text-fill: black;"
+                        + "-fx-padding: 10px 44px;"
+                        + "-fx-background-radius: 10;");
         pruefen.setOnAction(e -> {
             String korrekt = frage.getKorrekteAntwort();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
