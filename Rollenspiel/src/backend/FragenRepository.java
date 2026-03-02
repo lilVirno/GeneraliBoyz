@@ -28,10 +28,10 @@ public class FragenRepository {
         antwortenMC.add(new Antwort(false, "list by"));
         fragen.add(new Frage(Themenbereich.SQL, "Wie sortiere ich mein Query-Output?", antwortenMC));
 
-        fragen.add(new Frage(Themenbereich.SQL, "Wie sortiere ich mein Query-Output?", antwortenMC));
-        fragen.add(new Frage(Themenbereich.SQL, "Wie sortiere ich mein Query-Output?", antwortenMC));
-        fragen.add(new Frage(Themenbereich.SQL, "Wie sortiere ich mein Query-Output?", antwortenMC));
-        fragen.add(new Frage(Themenbereich.SQL, "Wie sortiere ich mein Query-Output?", antwortenMC));
+        fragen.add(new Frage(Themenbereich.SQL, "1Wie sortiere ich mein Query-Output?", antwortenMC));
+        fragen.add(new Frage(Themenbereich.SQL, "2Wie sortiere ich mein Query-Output?", antwortenMC));
+        fragen.add(new Frage(Themenbereich.SQL, "3Wie sortiere ich mein Query-Output?", antwortenMC));
+        fragen.add(new Frage(Themenbereich.SQL, "4Wie sortiere ich mein Query-Output?", antwortenMC));
 
         return fragen;
     }
