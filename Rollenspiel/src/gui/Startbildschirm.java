@@ -21,6 +21,8 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
+import backend.Spieler;
+
 public class Startbildschirm extends Application {
 
     private FragenController fragenController;
@@ -28,8 +30,8 @@ public class Startbildschirm extends Application {
     private static final String ABSOLUTE_PATH =
             "Rollenspiel/src/resources/Designer.png";
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 450;
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 600;
     private static final double SPLASH_SECONDS = 2.5;
 
     private static final String SOLID_BG_HEX = "#2EA3A3";
@@ -38,10 +40,14 @@ public class Startbildschirm extends Application {
     private Scene themenScene;
     private Scene profilScene;
 
+    private Spieler aktuellerSpieler;
+
     @Override
     public void start(Stage stage) {
-
         this.stage = stage;
+
+        // Spieler erst mal "leer" anlegen
+        this.aktuellerSpieler = new Spieler("");
 
         Image bgImage = new Image(
                 new File(ABSOLUTE_PATH).toURI().toString(),
@@ -51,20 +57,73 @@ public class Startbildschirm extends Application {
         StackPane splashRoot = createSplashRoot(bgImage);
         Scene splashScene = new Scene(splashRoot, WIDTH, HEIGHT, Color.BLACK);
 
+        // Hier liegt die Magie: Wir fügen das Namens-Feld in das Start-Root ein
         StackPane startRoot = createStartRoot(bgImage);
+        showNameInputOverlay(startRoot); // Das PopUp wird hier drübergelegt
+
         startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
+        // ... Rest wie gehabt (ThemenScene, ProfilScene)
         VBox themenVBox = createThemenRoot();
         themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
 
-        VBox profilVBox = createProfilRoot();
-        profilScene = new Scene(profilVBox, WIDTH, HEIGHT);
+        // Wichtig: ProfilScene hier noch nicht final erstellen,
+        // da der Name erst später kommt!
 
         stage.setTitle("Gamification – Lernspiel");
         stage.setScene(splashScene);
         stage.show();
 
         runSplashSequence(stage, splashScene, startScene);
+    }
+
+    private void showNameInputOverlay(StackPane root) {
+        // Dunkler Hintergrund für den Fokus
+        Region blurBg = new Region();
+        blurBg.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
+
+        // Die Eingabebox
+        VBox inputContainer = new VBox(20);
+        inputContainer.setAlignment(Pos.CENTER);
+        inputContainer.setMaxSize(400, 250);
+        inputContainer.setStyle("-fx-background-color: #2EA3A3; -fx-background-radius: 20; -fx-border-color: white; -fx-border-width: 2;");
+        inputContainer.setPadding(new Insets(30));
+
+        Label frage = new Label("Wie lautet dein Name?");
+        frage.setStyle("-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Dein Name...");
+        nameField.setStyle("-fx-font-size: 18px; -fx-background-radius: 10; -fx-padding: 10;");
+        // Erlaubt das Bestätigen durch Drücken der Enter-Taste
+        Button confirmBtn = new Button("Bestätigen");
+        nameField.setOnAction(e -> confirmBtn.fire());
+        confirmBtn.setStyle(buttonMain()); // Nutzt dein vorhandenes Button-Styling
+
+        inputContainer.getChildren().addAll(frage, nameField, confirmBtn);
+
+        // Alles zum Root hinzufügen
+        root.getChildren().addAll(blurBg, inputContainer);
+
+        // Logik beim Klicken
+        confirmBtn.setOnAction(e -> {
+            String name = nameField.getText().trim();
+            if (!name.isEmpty()) {
+                aktuellerSpieler.setName(name);
+
+                // Profilseite erst jetzt mit dem richtigen Namen bauen
+                profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
+
+                // Animation: Overlay ausfaden
+                FadeTransition ft = new FadeTransition(Duration.millis(400), blurBg);
+                FadeTransition ft2 = new FadeTransition(Duration.millis(400), inputContainer);
+                ft.setToValue(0);
+                ft2.setToValue(0);
+                ft2.setOnFinished(ev -> root.getChildren().removeAll(blurBg, inputContainer));
+                ft.play();
+                ft2.play();
+            }
+        });
     }
 
     // ---------- Splash ----------
@@ -97,8 +156,8 @@ public class Startbildschirm extends Application {
         VBox overlayBox = new VBox(12, titel, startButton);
         overlayBox.setPadding(new Insets(16));
         overlayBox.setAlignment(Pos.CENTER);
-        titel.setTranslateY(-10);
-        startButton.setTranslateY(100);
+        titel.setTranslateY(-30);
+        startButton.setTranslateY(120);
 
         Region overlayBackground = new Region();
         overlayBackground.setStyle("-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;");
@@ -194,7 +253,11 @@ public class Startbildschirm extends Application {
             ft.play();
         });
 
-        profilBtn.setOnAction(e -> stage.setScene(profilScene));
+        profilBtn.setOnAction(e -> {
+            // Erstellt die Scene neu mit den aktuellen Werten aus 'aktuellerSpieler'
+            profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
+            stage.setScene(profilScene);
+        });
 
         header.getChildren().addAll(homeBtn, profilBtn);
 // ------------------------------------------
@@ -288,24 +351,106 @@ public class Startbildschirm extends Application {
     }
 
     private VBox createProfilRoot() {
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.CENTER);
+        VBox root = new VBox(15);
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setPadding(new Insets(20));
         root.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        Label placeholder = new Label("Profilseite");
-        placeholder.setStyle("-fx-font-size: 32px; -fx-text-fill: white; -fx-font-weight: bold;");
+        // --- Titel ---
+        Label titel = new Label("Hallo, " + aktuellerSpieler.getName());
+        titel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        Label info = new Label("Hier werden bald deine Statistiken angezeigt.");
-        info.setStyle("-fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.7);");
+        // --- Allgemeine Stats (Level & Punkte) ---
+        HBox generalStats = new HBox(40);
+        generalStats.setAlignment(Pos.CENTER);
+        generalStats.setStyle("-fx-background-color: rgba(0,0,0,0.15); -fx-padding: 10; -fx-background-radius: 10;");
 
-        Button backBtn = new Button("← Zurück");
-        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold;");
+        Label levelLabel = new Label("Rang: " + aktuellerSpieler.getLevel());
+        Label punkteLabel = new Label("Punkte: " + aktuellerSpieler.getPunktekonto());
+        levelLabel.setStyle("-fx-text-fill: #f1c40f; -fx-font-weight: bold; -fx-font-size: 16px;");
+        punkteLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+
+        generalStats.getChildren().addAll(levelLabel, punkteLabel);
+
+        // --- Themen-Fortschritte (Grid) ---
+        GridPane progressGrid = new GridPane();
+        progressGrid.setHgap(15);
+        progressGrid.setVgap(8);
+        progressGrid.setAlignment(Pos.CENTER);
+        progressGrid.setMaxWidth(500);
+        progressGrid.setPadding(new Insets(10));
+        progressGrid.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10;");
+
+        // Wir erstellen eine kleine Hilfsfunktion oder schleifen durch die 5 Bereiche
+        addProgressRow(progressGrid, "SQL", aktuellerSpieler.getFortschrittSQL(), 0);
+        addProgressRow(progressGrid, "UML", aktuellerSpieler.getFortschrittUML(), 1);
+        addProgressRow(progressGrid, "DATENBANK", aktuellerSpieler.getFortschrittDATENBANK(), 2);
+        addProgressRow(progressGrid, "PSEUDOCODE", aktuellerSpieler.getFortschrittPSEUDOCODE(), 3);
+        addProgressRow(progressGrid, "DESIGNPATTERN", aktuellerSpieler.getFortschrittDESIGNPATTERN(), 4);
+
+        // --- Gesamtfortschritt ---
+        VBox gesamtBox = new VBox(5);
+        gesamtBox.setAlignment(Pos.CENTER);
+        Label gesamtLabel = new Label("Gesamtfortschritt");
+        gesamtLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        ProgressBar gesamtBar = new ProgressBar(aktuellerSpieler.getGesamtFortschritt());
+        gesamtBar.setPrefWidth(400);
+        gesamtBar.setStyle("-fx-accent: #27ae60;"); // Ein schönes Grün
+        gesamtBox.getChildren().addAll(gesamtLabel, gesamtBar);
+
+        // --- Medaillen ---
+        Label medTitel = new Label("Deine Erfolge:");
+        medTitel.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+
+        HBox medailenGalerie = new HBox(10);
+        medailenGalerie.setAlignment(Pos.CENTER);
+        medailenGalerie.setPrefHeight(70);
+
+        for (String pfad : aktuellerSpieler.getMedallien()) {
+            try {
+                Image img = new Image(new File(pfad).toURI().toString());
+                ImageView iv = new ImageView(img);
+                iv.setFitHeight(50);
+                iv.setFitWidth(50);
+                iv.setPreserveRatio(true);
+                medailenGalerie.getChildren().add(iv);
+            } catch (Exception e) {
+                // Falls ein Pfad nicht stimmt, einfach ignorieren
+            }
+        }
+
+        if (medailenGalerie.getChildren().isEmpty()) {
+            Label leer = new Label("Noch keine Medaillen vorhanden.");
+            leer.setStyle("-fx-text-fill: rgba(255,255,255,0.4);");
+            medailenGalerie.getChildren().add(leer);
+        }
+
+        // --- Footer / Zurück ---
+        Button backBtn = new Button("← Zurück zur Auswahl");
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
         backBtn.setOnAction(e -> stage.setScene(themenScene));
 
-        root.getChildren().addAll(placeholder, info, backBtn);
+        root.getChildren().addAll(titel, generalStats, progressGrid, gesamtBox, medTitel, medailenGalerie, backBtn);
         return root;
+    }
+
+    // Hilfsmethode für die Zeilen im Grid
+    private void addProgressRow(GridPane grid, String labelText, double value, int row) {
+        Label lbl = new Label(labelText);
+        lbl.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+
+        ProgressBar pb = new ProgressBar(value);
+        pb.setPrefWidth(250);
+        pb.setStyle("-fx-accent: #3498db;"); // Blau für die Themenbereiche
+
+        Label prozentLbl = new Label((int)(value * 100) + "%");
+        prozentLbl.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+
+        grid.add(lbl, 0, row);
+        grid.add(pb, 1, row);
+        grid.add(prozentLbl, 2, row);
     }
 
 
