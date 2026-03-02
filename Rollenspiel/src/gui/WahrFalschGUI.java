@@ -9,7 +9,11 @@ import javafx.scene.layout.*;
 
 public class WahrFalschGUI extends BorderPane {
 
-    public WahrFalschGUI(Frage frage) {
+    private final Startbildschirm main;
+
+    public WahrFalschGUI(Frage frage, Startbildschirm main) {
+
+        this.main = main;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -42,5 +46,7 @@ public class WahrFalschGUI extends BorderPane {
         }
 
         alert.showAndWait();
+
+        main.oeffneNaechsteFrageOderBeenden();
     }
 }

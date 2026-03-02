@@ -9,7 +9,11 @@ import javafx.scene.layout.*;
 
 public class MultipleChoiceGUI extends BorderPane {
 
-    public MultipleChoiceGUI(Frage frage) {
+    private final Startbildschirm main;
+
+    public MultipleChoiceGUI(Frage frage, Startbildschirm main) {
+
+        this.main = main;
 
         // Frage oben
         Label frageLabel = new Label(frage.getFrage());
@@ -46,5 +50,7 @@ public class MultipleChoiceGUI extends BorderPane {
         }
 
         alert.showAndWait();
+
+        main.oeffneNaechsteFrageOderBeenden();
     }
 }

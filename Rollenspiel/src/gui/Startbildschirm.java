@@ -1,6 +1,7 @@
 package gui;
 
 import backend.Frage;
+import backend.FragenController;
 import backend.FragenRepository;
 import enums.Themenbereich;
 
@@ -22,6 +23,8 @@ import java.util.List;
 
 public class Startbildschirm extends Application {
 
+    private FragenController fragenController;
+    private Stage stage;
     private static final String ABSOLUTE_PATH =
             "Rollenspiel/src/resources/Designer.png";
 
@@ -36,6 +39,8 @@ public class Startbildschirm extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        this.stage = stage;
 
         Image bgImage = new Image(
                 new File(ABSOLUTE_PATH).toURI().toString(),
@@ -214,7 +219,8 @@ public class Startbildschirm extends Application {
             return;
         }
 
-        öffneFrageGUI(fragen.get(0));
+        this.fragenController = new FragenController(fragen);
+        öffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
@@ -231,9 +237,9 @@ public class Startbildschirm extends Application {
         // 2. Frage-Inhalt laden
         Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
-            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage);
-            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage);
-            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage);
+            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this);
+            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this);
+            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this);
             default -> { return; }
         }
 
@@ -253,10 +259,25 @@ public class Startbildschirm extends Application {
         VBox.setVgrow(spezifischesPanel, Priority.ALWAYS);
 
         // Szene im selben Fenster setzen
-        Stage stage = (Stage) themenScene.getWindow();
         Scene scene = new Scene(frageRoot, WIDTH, HEIGHT);
         stage.setScene(scene);
     }
+
+    public void oeffneNaechsteFrageOderBeenden() {
+        if (fragenController.hatNaechsteFrage()) {
+            fragenController.naechsteFrage();
+            öffneFrageGUI(fragenController.getAktuelleFrage());
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText("Alle Fragen beantwortet!");
+            alert.showAndWait();
+
+            // zurück zum Themenbildschirm
+            stage.setScene(themenScene);
+        }
+    }
+
 
     // ---------- Styling ----------
     private String buttonMain() {
