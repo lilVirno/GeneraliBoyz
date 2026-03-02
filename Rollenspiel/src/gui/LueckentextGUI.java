@@ -1,10 +1,12 @@
 package gui;
 
 import backend.Frage;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 
 public class LueckentextGUI extends BorderPane {
 
@@ -43,9 +45,22 @@ public class LueckentextGUI extends BorderPane {
                 alert.setContentText("Falsch!");
             }
 
-            alert.showAndWait();
+            alert.show();
 
-            main.oeffneNaechsteFrageOderBeenden();
+            // Timer zum automatischen Schließen des Pop-ups und Weiterleitung
+            PauseTransition delay = new PauseTransition(Duration.seconds(3));
+            delay.setOnFinished(event -> {
+                alert.close();
+                main.oeffneNaechsteFrageOderBeenden();
+            });
+            delay.play();
+
+            // Weiterleitung bei manuellen Schließen des Pop-ups
+            alert.setOnHidden(event -> {
+                // verhinert doppeltes Auführen
+                delay.stop();
+                main.oeffneNaechsteFrageOderBeenden();
+            });
         });
 
         setBottom(pruefen);
