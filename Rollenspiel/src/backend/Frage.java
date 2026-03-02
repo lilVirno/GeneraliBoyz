@@ -10,6 +10,7 @@ public class Frage {
     private Fragenkategorie fragenkategorie;
     private String frage;
     private List<Antwort> antworten;
+    private boolean geloest = false;
 
     public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten) {
         this.themenbereich = themenbereich;
@@ -48,6 +49,14 @@ public class Frage {
 
     public void setAntworten(List<Antwort> antworten) {
         this.antworten = antworten;
+    }
+
+    public boolean isGeloest() {
+        return geloest;
+    }
+
+    public void setGeloest() {
+        this.geloest = true;
     }
 
     private Fragenkategorie ermittleKategorie() {
