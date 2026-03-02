@@ -36,6 +36,7 @@ public class Startbildschirm extends Application {
 
     private Scene startScene;
     private Scene themenScene;
+    private Scene profilScene;
 
     @Override
     public void start(Stage stage) {
@@ -55,6 +56,9 @@ public class Startbildschirm extends Application {
 
         VBox themenVBox = createThemenRoot();
         themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
+
+        VBox profilVBox = createProfilRoot();
+        profilScene = new Scene(profilVBox, WIDTH, HEIGHT);
 
         stage.setTitle("Gamification – Lernspiel");
         stage.setScene(splashScene);
@@ -159,25 +163,28 @@ public class Startbildschirm extends Application {
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        // --- Header mit Home-Button ---
+        // --- Header mit Home- und Profil-Button ---
         AnchorPane header = new AnchorPane();
-        header.setPadding(new Insets(0, 20, 0, 20));
+        header.setPadding(new Insets(10, 20, 0, 20));
 
+// Home Button (Links oben)
         Button homeBtn = new Button("🏠 Home");
-        // Ein schlichtes Styling für den Home-Button
-        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        AnchorPane.setLeftAnchor(homeBtn, 10.0);
+        AnchorPane.setTopAnchor(homeBtn, 0.0);
 
-        // Positionierung oben rechts im AnchorPane
-        AnchorPane.setTopAnchor(homeBtn, 10.0);
-        AnchorPane.setRightAnchor(homeBtn, 10.0);
+// Profil Button (Rechts oben)
+        Button profilBtn = new Button("👤 Profil");
+        profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        AnchorPane.setRightAnchor(profilBtn, 10.0);
+        AnchorPane.setTopAnchor(profilBtn, 0.0);
 
         homeBtn.setOnAction(e -> {
-            // Zurück zur Startscene mit einem kleinen Fade
+            // Deine bestehende Home-Logik
             FadeTransition ft = new FadeTransition(Duration.millis(300), themenScene.getRoot());
             ft.setFromValue(1.0);
             ft.setToValue(0.0);
             ft.setOnFinished(ev -> {
-                Stage stage = (Stage) vbox.getScene().getWindow();
                 stage.setScene(startScene);
                 startScene.getRoot().setOpacity(0);
                 FadeTransition fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
@@ -187,8 +194,10 @@ public class Startbildschirm extends Application {
             ft.play();
         });
 
-        header.getChildren().add(homeBtn);
-        // ------------------------------
+        profilBtn.setOnAction(e -> stage.setScene(profilScene));
+
+        header.getChildren().addAll(homeBtn, profilBtn);
+// ------------------------------------------
 
         Label auswahlLabel = new Label("Wähle einen Themenbereich:");
         auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
@@ -276,6 +285,27 @@ public class Startbildschirm extends Application {
             // zurück zum Themenbildschirm
             stage.setScene(themenScene);
         }
+    }
+
+    private VBox createProfilRoot() {
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.CENTER);
+        root.setBackground(new Background(new BackgroundFill(
+                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+        )));
+
+        Label placeholder = new Label("Profilseite");
+        placeholder.setStyle("-fx-font-size: 32px; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        Label info = new Label("Hier werden bald deine Statistiken angezeigt.");
+        info.setStyle("-fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.7);");
+
+        Button backBtn = new Button("← Zurück");
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold;");
+        backBtn.setOnAction(e -> stage.setScene(themenScene));
+
+        root.getChildren().addAll(placeholder, info, backBtn);
+        return root;
     }
 
 
