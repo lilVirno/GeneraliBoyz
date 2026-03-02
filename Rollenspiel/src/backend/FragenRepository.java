@@ -12,6 +12,13 @@ public class FragenRepository {
     public static List<Frage> getAlleFragen() {
         List<Frage> fragen = new ArrayList<>();
 
+        List<Antwort> antwortenMultiAntwort = new ArrayList<>();
+        antwortenMultiAntwort.add(new Antwort(true, "richtig"));
+        antwortenMultiAntwort.add(new Antwort(true, "richtig"));
+        antwortenMultiAntwort.add(new Antwort(false, "falsch"));
+        antwortenMultiAntwort.add(new Antwort(false, "falsch"));
+        fragen.add(new Frage(Themenbereich.SQL, "Richtig oder Falsch?", antwortenMultiAntwort));
+
         List<Antwort> antwortL = new ArrayList<>();
         antwortL.add(new Antwort(true, "sort by"));
         fragen.add(new Frage(Themenbereich.SQL, "Man kann den Query-Output mit ____ __ sortieren.", antwortL));
