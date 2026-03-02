@@ -298,15 +298,27 @@ public class Startbildschirm extends Application {
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
     private void öffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
-        frageRoot.setAlignment(Pos.CENTER);
-        frageRoot.setPadding(new Insets(40));
+        frageRoot.setAlignment(Pos.TOP_CENTER); // Von Center auf TOP_CENTER ändern
+        frageRoot.setPadding(new Insets(10, 0, 40, 0));
+        frageRoot.setBackground(new Background(new BackgroundFill(Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        // 1. Hintergrund anpassen (Passend zum Themen-Bildschirm)
-        frageRoot.setBackground(new Background(new BackgroundFill(
-                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
-        )));
+        // Header für Abbruch
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(10, 20, 0, 20));
 
-        // 2. Frage-Inhalt laden
+        Button cancelBtn = new Button("✕ Abbrechen");
+        cancelBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        cancelBtn.setOnAction(e -> stage.setScene(themenScene));
+
+        AnchorPane.setLeftAnchor(cancelBtn, 10.0);
+        AnchorPane.setTopAnchor(cancelBtn, 0.0);
+        header.getChildren().add(cancelBtn);
+
+        // Frage-Inhalt (muss jetzt in eine eigene Box, damit er zentriert bleibt)
+        VBox content = new VBox(20);
+        content.setAlignment(Pos.CENTER);
+        VBox.setVgrow(content, Priority.ALWAYS);
+
         Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
             case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this);
@@ -314,25 +326,11 @@ public class Startbildschirm extends Application {
             case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this);
             default -> { return; }
         }
-
-        // Damit das Panel der Frage durchsichtig ist und unser Hintergrund wirkt
         spezifischesPanel.setStyle("-fx-background-color: transparent;");
+        content.getChildren().add(spezifischesPanel);
 
-        // 3. Zurück-Button (oben links oder unten)
-        Button backBtn = new Button("← Zurück");
-        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-cursor: hand;");
-        backBtn.setOnAction(e -> {
-            Stage stage = (Stage) frageRoot.getScene().getWindow();
-            stage.setScene(themenScene);
-        });
-
-        // Alles zusammenfügen
-        frageRoot.getChildren().addAll(backBtn, spezifischesPanel);
-        VBox.setVgrow(spezifischesPanel, Priority.ALWAYS);
-
-        // Szene im selben Fenster setzen
-        Scene scene = new Scene(frageRoot, WIDTH, HEIGHT);
-        stage.setScene(scene);
+        frageRoot.getChildren().addAll(header, content);
+        stage.setScene(new Scene(frageRoot, WIDTH, HEIGHT));
     }
 
     public void oeffneNaechsteFrageOderBeenden() {
@@ -353,10 +351,22 @@ public class Startbildschirm extends Application {
     private VBox createProfilRoot() {
         VBox root = new VBox(15);
         root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(20));
+        root.setPadding(new Insets(10, 20, 0, 20));
         root.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
+
+        // --- Header ---
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(10, 20, 0, 20));
+
+        Button backBtn = new Button("← Zurück");
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        backBtn.setOnAction(e -> stage.setScene(themenScene));
+
+        AnchorPane.setLeftAnchor(backBtn, 10.0);
+        AnchorPane.setTopAnchor(backBtn, 0.0);
+        header.getChildren().add(backBtn);
 
         // --- Titel ---
         Label titel = new Label("Hallo, " + aktuellerSpieler.getName());
@@ -427,12 +437,7 @@ public class Startbildschirm extends Application {
             medailenGalerie.getChildren().add(leer);
         }
 
-        // --- Footer / Zurück ---
-        Button backBtn = new Button("← Zurück zur Auswahl");
-        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-        backBtn.setOnAction(e -> stage.setScene(themenScene));
-
-        root.getChildren().addAll(titel, generalStats, progressGrid, gesamtBox, medTitel, medailenGalerie, backBtn);
+        root.getChildren().addAll(header, titel, generalStats, progressGrid, gesamtBox, medTitel, medailenGalerie);
         return root;
     }
 
