@@ -48,7 +48,7 @@ public class MultipleChoiceGUI extends BorderPane {
 
         // Bestätigen Button unten
         Button submitBtn = new Button("Prüfen");
-        submitBtn.setStyle("-fx-font-size: 18px; -fx-base: #2ecc71; -fx-text-fill: white;");
+        submitBtn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
         submitBtn.setOnAction(e -> pruefeAntwort());
 
         HBox bottomBox = new HBox(submitBtn);

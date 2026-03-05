@@ -29,7 +29,7 @@ public class WahrFalschGUI extends BorderPane {
 
         for (Antwort antwort : frage.getAntworten()) {
             Button btn = new Button(antwort.getAntwort());
-            btn.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+            btn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
             btn.setOnAction(e -> pruefeAntwort(antwort));
             buttonBox.getChildren().add(btn);
         }
