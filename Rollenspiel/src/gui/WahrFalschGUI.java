@@ -2,6 +2,7 @@ package gui;
 
 import backend.Antwort;
 import backend.Frage;
+import backend.Spieler;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,10 +13,14 @@ import javafx.util.Duration;
 public class WahrFalschGUI extends BorderPane {
 
     private final Startbildschirm main;
+    private final Frage aktuelleFrage;
+    private final Spieler aktuellerSpieler;
 
-    public WahrFalschGUI(Frage frage, Startbildschirm main) {
+    public WahrFalschGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
+        this.aktuelleFrage = frage;
+        this.aktuellerSpieler = spieler;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -44,6 +49,8 @@ public class WahrFalschGUI extends BorderPane {
 
         if (antwort.isRichtig()) {
             alert.setContentText("Richtig!");
+            aktuelleFrage.setGeloest();
+            aktuellerSpieler.addPunkte(aktuelleFrage);
         } else {
             alert.setContentText("Falsch!");
         }
