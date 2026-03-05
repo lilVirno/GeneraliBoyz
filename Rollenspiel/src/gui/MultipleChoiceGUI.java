@@ -6,6 +6,8 @@ import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
@@ -36,9 +38,11 @@ public class MultipleChoiceGUI extends BorderPane {
         antwortBox.setAlignment(Pos.CENTER_LEFT);
         antwortBox.setPadding(new Insets(20, 50, 20, 50));
 
+
         // Checkboxen für jede Antwort erstellen
         for (Antwort antwort : frage.getAntworten()) {
             CheckBox cb = new CheckBox(antwort.getAntwort());
+            cb.setFocusTraversable(false);
             cb.setStyle("-fx-font-siye: 32px;");
             cb.setUserData(antwort);
             checkBoxes.add(cb);
@@ -48,6 +52,7 @@ public class MultipleChoiceGUI extends BorderPane {
 
         // Bestätigen Button unten
         Button submitBtn = new Button("Prüfen");
+        submitBtn.setDefaultButton(true);
         submitBtn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
         submitBtn.setOnAction(e -> pruefeAntwort());
 
