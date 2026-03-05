@@ -7,6 +7,8 @@ import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
@@ -39,19 +41,51 @@ public class MultipleChoiceGUI extends BorderPane {
         antwortBox.setAlignment(Pos.CENTER_LEFT);
         antwortBox.setPadding(new Insets(20, 50, 20, 50));
 
+
         // Checkboxen für jede Antwort erstellen
         for (Antwort antwort : frage.getAntworten()) {
             CheckBox cb = new CheckBox(antwort.getAntwort());
-            cb.setStyle("-fx-font-siye: 32px;");
+            cb.setFocusTraversable(false);
             cb.setUserData(antwort);
+
+            // 1. Basis-Styling für Text und Abstände
+            String baseStyle = "-fx-font-size: 24px; "
+                    + "-fx-text-fill: #333333; "
+                    + "-fx-padding: 10px; "
+                    + "-fx-cursor: hand; ";
+
+            cb.setStyle(baseStyle);
+
+            // 2. Styling für das Quadrat (die "Box") selbst:
+            // Wir nutzen Lookups erst nach dem Rendern oder setzen ein allgemeines Stylesheet.
+            // Da wir hier im Loop sind, ist die sauberste Methode für "abgerundet & weiß"
+            // das Anwenden auf die Sub-Struktur via CSS-String:
+            cb.lookupAll(".box").forEach(node -> node.setStyle("-fx-background-radius: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5;"));
+
+            // Falls das lookup oben noch nichts findet (weil noch nicht angezeigt),
+            // fügen wir das Styling für die Box als "festen" Bestandteil hinzu:
+            cb.setStyle(cb.getStyle() + "-fx-box-background: white; -fx-box-border: #cccccc;");
+
+            // Skalierung beibehalten
+            cb.setScaleX(1.2);
+            cb.setScaleY(1.2);
+
+            // Hover-Effekt (sanftes Grau für den Hintergrund des ganzen Elements)
+            cb.setOnMouseEntered(e -> cb.setStyle(cb.getStyle() + "-fx-background-color: #f9f9f9; -fx-background-radius: 8;"));
+            cb.setOnMouseExited(e -> cb.setStyle(cb.getStyle().replace("-fx-background-color: #f9f9f9; -fx-background-radius: 8;", "")));
+
             checkBoxes.add(cb);
             antwortBox.getChildren().add(cb);
         }
+
+// Abstand zwischen den Checkboxen in der VBox (antwortBox) einstellen
+        antwortBox.setSpacing(15);
         setCenter(antwortBox);
 
         // Bestätigen Button unten
         Button submitBtn = new Button("Prüfen");
-        submitBtn.setStyle("-fx-font-size: 18px; -fx-base: #2ecc71; -fx-text-fill: white;");
+        submitBtn.setDefaultButton(true);
+        submitBtn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
         submitBtn.setOnAction(e -> pruefeAntwort());
 
         HBox bottomBox = new HBox(submitBtn);
