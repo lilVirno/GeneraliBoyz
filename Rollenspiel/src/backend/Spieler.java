@@ -1,6 +1,7 @@
 package backend;
 
 import enums.Level;
+import enums.Themenbereich;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,5 +159,32 @@ public class Spieler {
 
     public void setMedallien(List<String> medallien) {
         this.medallien = medallien;
+    }
+
+    public void addPunkte(Frage frage) {
+        this.punktekonto += frage.getPunkte();
+
+        // Gesamtfortschritt und Level neu berechnen
+        setGesamtFortschritt();
+        setLevel();
+
+        // Themen-spezifischen Fortschritt berechnen
+        aktualisiereThemenFortschritt(frage.getThemenbereich());
+
+        // Prüfen, ob neue Medaillen dazugekommen sind
+        setMedallienArray();
+    }
+
+    private void aktualisiereThemenFortschritt(Themenbereich bereich) {
+        // Berechnung: (Beantwortete Fragen in diesem Bereich) / (Gesamtanzahl Fragen in diesem Bereich)
+        double fortschritt = FragenRepository.berechneFortschrittFuerThema(bereich);
+
+        switch (bereich) {
+            case SQL -> setFortschrittSQL(fortschritt);
+            case UML -> setFortschrittUML(fortschritt);
+            case DATENBANK -> setFortschrittDATENBANK(fortschritt);
+            case PSEUDOCODE -> setFortschrittPSEUDOCODE(fortschritt);
+            case DESIGN_PATTERN -> setFortschrittDESIGNPATTERN(fortschritt);
+        }
     }
 }

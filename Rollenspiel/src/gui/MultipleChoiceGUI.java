@@ -2,6 +2,7 @@ package gui;
 
 import backend.Antwort;
 import backend.Frage;
+import backend.Spieler;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,11 +20,13 @@ public class MultipleChoiceGUI extends BorderPane {
     private final Startbildschirm main;
     private final List<CheckBox> checkBoxes = new ArrayList<>();
     private final Frage aktuelleFrage;
+    private final Spieler aktuellerSpieler;
 
-    public MultipleChoiceGUI(Frage frage, Startbildschirm main) {
+    public MultipleChoiceGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
         this.aktuelleFrage = frage;
+        this.aktuellerSpieler = spieler;
 
         // Frage oben
         Label frageLabel = new Label(frage.getFrage());
@@ -112,6 +115,8 @@ public class MultipleChoiceGUI extends BorderPane {
 
         if (erfolg) {
             alert.setContentText("Richtig! Alle korrekten Antworten wurden ausgewählt.");
+            this.aktuelleFrage.setGeloest();
+            aktuellerSpieler.addPunkte(aktuelleFrage);
         } else {
             alert.setContentText("Falsch! Die Komination der Antworten stimmt nicht.");
         }
@@ -129,7 +134,7 @@ public class MultipleChoiceGUI extends BorderPane {
         alert.setOnHidden(event -> {
             // verhinert doppeltes Auführen
             delay.stop();
-            main.oeffneNaechsteFrageOderBeenden();
+            this.main.oeffneNaechsteFrageOderBeenden();
         });
 
         alert.show();

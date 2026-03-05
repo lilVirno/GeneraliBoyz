@@ -19,9 +19,9 @@ public class FragenController {
         return index < fragen.size() - 1;
     }
 
-    public Frage naechsteFrage() {
+    public void naechsteFrage() {
         index++;
-        return getAktuelleFrage();
+        getAktuelleFrage();
     }
 }
 

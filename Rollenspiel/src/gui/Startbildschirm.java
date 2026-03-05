@@ -281,14 +281,13 @@ public class Startbildschirm extends Application {
 
     // ---------- Logik aus Swing: Fragen laden ----------
     private void ladeFragenUndÖffne(Themenbereich thema) {
-        List<Frage> fragen = FragenRepository.getAlleFragen().stream()
-                .filter(f -> f.getThemenbereich() == thema)
-                .toList();
+        List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Glückwunsch!");
             alert.setHeaderText(null);
-            alert.setContentText("Keine Fragen für dieses Thema gefunden.");
+            alert.setContentText("Du hast bereits alle Fragen zu " + thema + " beantwortet!");
             alert.showAndWait();
             return;
         }
@@ -324,9 +323,9 @@ public class Startbildschirm extends Application {
 
         Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
-            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this);
-            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this);
-            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this);
+            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this, aktuellerSpieler);
+            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this, aktuellerSpieler);
+            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this, aktuellerSpieler);
             default -> { return; }
         }
         spezifischesPanel.setStyle("-fx-background-color: transparent;");
