@@ -78,6 +78,7 @@ public class MultipleChoiceGUI extends BorderPane {
 
         if (erfolg) {
             alert.setContentText("Richtig! Alle korrekten Antworten wurden ausgewählt.");
+            this.aktuelleFrage.setGeloest();
         } else {
             alert.setContentText("Falsch! Die Komination der Antworten stimmt nicht.");
         }

@@ -12,10 +12,12 @@ import javafx.util.Duration;
 public class WahrFalschGUI extends BorderPane {
 
     private final Startbildschirm main;
+    private final Frage aktuelleFrage;
 
     public WahrFalschGUI(Frage frage, Startbildschirm main) {
 
         this.main = main;
+        this.aktuelleFrage = frage;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -43,6 +45,7 @@ public class WahrFalschGUI extends BorderPane {
 
         if (antwort.isRichtig()) {
             alert.setContentText("Richtig!");
+            aktuelleFrage.setGeloest();
         } else {
             alert.setContentText("Falsch!");
         }

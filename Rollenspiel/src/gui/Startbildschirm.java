@@ -279,14 +279,13 @@ public class Startbildschirm extends Application {
 
     // ---------- Logik aus Swing: Fragen laden ----------
     private void ladeFragenUndÖffne(Themenbereich thema) {
-        List<Frage> fragen = FragenRepository.getAlleFragen().stream()
-                .filter(f -> f.getThemenbereich() == thema)
-                .toList();
+        List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Glückwunsch!");
             alert.setHeaderText(null);
-            alert.setContentText("Keine Fragen für dieses Thema gefunden.");
+            alert.setContentText("Du hast bereits alle Fragen zu " + thema + " beantwortet!");
             alert.showAndWait();
             return;
         }

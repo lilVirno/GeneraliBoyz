@@ -11,10 +11,12 @@ import javafx.util.Duration;
 public class LueckentextGUI extends BorderPane {
 
     private final Startbildschirm main;
+    private final Frage aktuelleFrage;
 
     public LueckentextGUI(Frage frage, Startbildschirm main) {
 
         this.main = main;
+        this.aktuelleFrage = frage;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -41,6 +43,8 @@ public class LueckentextGUI extends BorderPane {
 
             if (eingabe.getText().trim().equalsIgnoreCase(korrekt)) {
                 alert.setContentText("Richtig!");
+                this.aktuelleFrage.setGeloest();
+
             } else {
                 alert.setContentText("Falsch!");
             }

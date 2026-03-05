@@ -9,9 +9,25 @@ public class FragenRepository {
     /*
     Diese Klasse enthält Mock-Fragen zum Testen bis die Datenbank eingebunden ist
      */
-    public static List<Frage> getAlleFragen() {
-        List<Frage> fragen = new ArrayList<>();
 
+    public static List<Frage> alleFragen = null;
+
+    public static List<Frage> getAlleFragen() {
+        if (alleFragen == null) {
+            alleFragen = new ArrayList<>();
+            initialisiereMockDaten(alleFragen);
+        }
+        return alleFragen;
+    }
+
+    public static List<Frage> getUngeloesteFragen(Themenbereich thema) {
+        return getAlleFragen().stream()
+                .filter(f -> f.getThemenbereich() == thema)
+                .filter(f -> !f.isGeloest())
+                .toList();
+    }
+
+    private static void initialisiereMockDaten(List<Frage> fragen) {
         List<Antwort> antwortenMultiAntwort = new ArrayList<>();
         antwortenMultiAntwort.add(new Antwort(true, "richtig"));
         antwortenMultiAntwort.add(new Antwort(true, "richtig"));
@@ -39,7 +55,5 @@ public class FragenRepository {
         fragen.add(new Frage(Themenbereich.SQL, "2Wie sortiere ich mein Query-Output?", antwortenMC));
         fragen.add(new Frage(Themenbereich.SQL, "3Wie sortiere ich mein Query-Output?", antwortenMC));
         fragen.add(new Frage(Themenbereich.SQL, "4Wie sortiere ich mein Query-Output?", antwortenMC));
-
-        return fragen;
     }
 }
