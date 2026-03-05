@@ -5,7 +5,9 @@ public enum Themenbereich {
     UML("UML-Diagramme"),
     DATENBANK("Datenbankmodellierung"),
     PSEUDOCODE("Pseudocode"),
-    DESIGN_PATTERN("Design Pattern"),
+    RECHT("Recht"),
+    WIRTSCHAFT("Wirtschaft"),
+    MASCHINELLESLEARNING("Maschinelles Lernen"),
     ;
     private final String name;
 

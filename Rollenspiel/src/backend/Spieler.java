@@ -24,7 +24,11 @@ public class Spieler {
 
     private double fortschrittPSEUDOCODE;
 
-    private double fortschrittDESIGNPATTERN;
+    private double fortschrittRECHT;
+
+    private double fortschrittMASCHINELLES_LEARNING;
+
+    private double fortschrittWIRTSCHAFT;
 
     private List<String> medallien;
 
@@ -43,7 +47,9 @@ public class Spieler {
         this.fortschrittUML = 0.0;
         this.fortschrittDATENBANK = 0.0;
         this.fortschrittPSEUDOCODE = 0.0;
-        this.fortschrittDESIGNPATTERN = 0.0;
+        this.fortschrittRECHT = 0.0;
+        this.fortschrittWIRTSCHAFT = 0.0;
+        this.fortschrittMASCHINELLES_LEARNING = 0.0;
     }
 
     public double getFortschrittSQL() {
@@ -78,12 +84,12 @@ public class Spieler {
         this.fortschrittPSEUDOCODE = fortschrittPSEUDOCODE;
     }
 
-    public double getFortschrittDESIGNPATTERN() {
-        return fortschrittDESIGNPATTERN;
+    public double getFortschrittRECHT() {
+        return fortschrittRECHT;
     }
 
-    public void setFortschrittDESIGNPATTERN(double fortschrittDESIGNPATTERN) {
-        this.fortschrittDESIGNPATTERN = fortschrittDESIGNPATTERN;
+    public void setFortschrittRECHT(double fortschrittRECHT) {
+        this.fortschrittRECHT = fortschrittRECHT;
     }
 
     public String getName() {
@@ -132,21 +138,43 @@ public class Spieler {
         return 200;
     }
 
+    public double getFortschrittMASCHINELLES_LEARNING() {
+        return fortschrittMASCHINELLES_LEARNING;
+    }
+
+    public void setFortschrittMASCHINELLES_LEARNING(double fortschrittMASCHINELLES_LEARNING) {
+        this.fortschrittMASCHINELLES_LEARNING = fortschrittMASCHINELLES_LEARNING;
+    }
+
+    public double getFortschrittWIRTSCHAFT() {
+        return fortschrittWIRTSCHAFT;
+    }
+
+    public void setFortschrittWIRTSCHAFT(double fortschrittWIRTSCHAFT) {
+        this.fortschrittWIRTSCHAFT = fortschrittWIRTSCHAFT;
+    }
+
     public void setMedallienArray() {
         if (fortschrittSQL == 1) {
-            medallien.add("Rollenspiel/src/resources/BlauMedallie.jpg");
+            medallien.add("Rollenspiel/src/resources/Medaille_SQL_T.png");
         }
         if (fortschrittUML == 1) {
-            medallien.add("Rollenspiel/src/resources/GrünMedallie.jpg");
+            medallien.add("Rollenspiel/src/resources/Medaille_UML_T.png");
         }
         if (fortschrittDATENBANK == 1) {
-            medallien.add("Rollenspiel/src/resources/LilaMedallie.jpg");
+            medallien.add("Rollenspiel/src/resources/Medaille_DATENBANKENMODELLIERUNG_T.png");
         }
         if (fortschrittPSEUDOCODE == 1) {
-            medallien.add("Rollenspiel/src/resources/olivgrünMedallie.jpg");
+            medallien.add("Rollenspiel/src/resources/Medaille_PROGRAMMIERUNG_PSEUDOCODE_T.png");
         }
-        if (fortschrittDESIGNPATTERN == 1){
-            medallien.add("Rollenspiel/src/resources/RotMedallie.jpg");
+        if (fortschrittRECHT == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_RECHT_T.png");
+        }
+        if (fortschrittMASCHINELLES_LEARNING == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_MASCHINELLES_LERNEN_T.png");
+        }
+        if (fortschrittWIRTSCHAFT == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_WIRTSCHAFT_T.png");
         }
         if (gesamtFortschritt == 1){
             medallien.add("Rollenspiel/src/resources/EndbossMedallie.jpg");
@@ -184,7 +212,9 @@ public class Spieler {
             case UML -> setFortschrittUML(fortschritt);
             case DATENBANK -> setFortschrittDATENBANK(fortschritt);
             case PSEUDOCODE -> setFortschrittPSEUDOCODE(fortschritt);
-            case DESIGN_PATTERN -> setFortschrittDESIGNPATTERN(fortschritt);
+            case RECHT -> setFortschrittRECHT(fortschritt);
+            case WIRTSCHAFT -> setFortschrittWIRTSCHAFT(fortschritt);
+            case MASCHINELLESLEARNING -> setFortschrittMASCHINELLES_LEARNING(fortschritt);
         }
     }
 }

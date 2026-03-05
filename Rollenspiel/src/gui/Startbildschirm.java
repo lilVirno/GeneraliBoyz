@@ -401,7 +401,9 @@ public class Startbildschirm extends Application {
         addProgressRow(progressGrid, "UML", aktuellerSpieler.getFortschrittUML(), 1);
         addProgressRow(progressGrid, "DATENBANK", aktuellerSpieler.getFortschrittDATENBANK(), 2);
         addProgressRow(progressGrid, "PSEUDOCODE", aktuellerSpieler.getFortschrittPSEUDOCODE(), 3);
-        addProgressRow(progressGrid, "DESIGNPATTERN", aktuellerSpieler.getFortschrittDESIGNPATTERN(), 4);
+        addProgressRow(progressGrid, "RECHT", aktuellerSpieler.getFortschrittRECHT(), 4);
+        addProgressRow(progressGrid, "WIRTSCHAFT", aktuellerSpieler.getFortschrittWIRTSCHAFT(), 5);
+        addProgressRow(progressGrid, "MASCHINELLES LERNEN", aktuellerSpieler.getFortschrittMASCHINELLES_LEARNING(), 6);
 
         // --- Gesamtfortschritt ---
         VBox gesamtBox = new VBox(5);
@@ -417,17 +419,23 @@ public class Startbildschirm extends Application {
         Label medTitel = new Label("Deine Erfolge:");
         medTitel.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
 
-        HBox medailenGalerie = new HBox(10);
+        HBox medailenGalerie = new HBox(15); // Abstand leicht erhöht für bessere Optik
         medailenGalerie.setAlignment(Pos.CENTER);
-        medailenGalerie.setPrefHeight(70);
+        // Erhöhe die PrefHeight, damit die größeren Bilder Platz haben (z.B. auf 120)
+        medailenGalerie.setPrefHeight(120);
 
         for (String pfad : aktuellerSpieler.getMedallien()) {
             try {
                 Image img = new Image(new File(pfad).toURI().toString());
                 ImageView iv = new ImageView(img);
-                iv.setFitHeight(50);
-                iv.setFitWidth(50);
+
+                // --- HIER DIE NEUE GRÖSSE ---
+                iv.setFitHeight(100); // Vorher 50
+                iv.setFitWidth(100);  // Vorher 50
+
                 iv.setPreserveRatio(true);
+                iv.setSmooth(true);    // Macht die Kanten bei der Skalierung schöner
+
                 medailenGalerie.getChildren().add(iv);
             } catch (Exception e) {
                 // Falls ein Pfad nicht stimmt, einfach ignorieren
