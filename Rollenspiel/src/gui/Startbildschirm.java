@@ -226,13 +226,13 @@ public class Startbildschirm extends Application {
         AnchorPane header = new AnchorPane();
         header.setPadding(new Insets(10, 20, 0, 20));
 
-// Home Button (Links oben)
+        // Home Button (Links oben)
         Button homeBtn = new Button("🏠 Home");
         homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
         AnchorPane.setLeftAnchor(homeBtn, 10.0);
         AnchorPane.setTopAnchor(homeBtn, 0.0);
 
-// Profil Button (Rechts oben)
+        // Profil Button (Rechts oben)
         Button profilBtn = new Button("👤 Profil");
         profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
         AnchorPane.setRightAnchor(profilBtn, 10.0);
