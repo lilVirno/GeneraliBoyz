@@ -29,6 +29,7 @@ public class LueckentextGUI extends BorderPane {
         BorderPane.setMargin(eingabe, new Insets(20));
 
         Button pruefen = new Button("Prüfen");
+        pruefen.setDefaultButton(true);
         pruefen.setStyle("-fx-font-size: 20px;"
                         + "-fx-background-color: #Ffffff;"
                         + "-fx-text-fill: black;"

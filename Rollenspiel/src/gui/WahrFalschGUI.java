@@ -32,6 +32,7 @@ public class WahrFalschGUI extends BorderPane {
             btn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
             btn.setOnAction(e -> pruefeAntwort(antwort));
             buttonBox.getChildren().add(btn);
+            btn.setFocusTraversable(false);
         }
 
         setCenter(buttonBox);
