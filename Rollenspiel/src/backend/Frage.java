@@ -11,12 +11,14 @@ public class Frage {
     private String frage;
     private List<Antwort> antworten;
     private boolean geloest = false;
+    private int punkte;
 
-    public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten) {
+    public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten, int punkte) {
         this.themenbereich = themenbereich;
         this.frage = frage;
         this.antworten = antworten;
         this.fragenkategorie = ermittleKategorie();
+        this.punkte = punkte;
     }
 
     public Themenbereich getThemenbereich() {
@@ -57,6 +59,14 @@ public class Frage {
 
     public void setGeloest() {
         this.geloest = true;
+    }
+
+    public int getPunkte() {
+        return punkte;
+    }
+
+    public void setPunkte(int punkte) {
+        this.punkte = punkte;
     }
 
     private Fragenkategorie ermittleKategorie() {

@@ -320,9 +320,9 @@ public class Startbildschirm extends Application {
 
         Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
-            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this);
-            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this);
-            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this);
+            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this, aktuellerSpieler);
+            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this, aktuellerSpieler);
+            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this, aktuellerSpieler);
             default -> { return; }
         }
         spezifischesPanel.setStyle("-fx-background-color: transparent;");

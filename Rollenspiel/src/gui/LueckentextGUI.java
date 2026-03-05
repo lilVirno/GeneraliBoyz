@@ -1,6 +1,7 @@
 package gui;
 
 import backend.Frage;
+import backend.Spieler;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,11 +13,13 @@ public class LueckentextGUI extends BorderPane {
 
     private final Startbildschirm main;
     private final Frage aktuelleFrage;
+    private final Spieler aktuellerSpieler;
 
-    public LueckentextGUI(Frage frage, Startbildschirm main) {
+    public LueckentextGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
         this.aktuelleFrage = frage;
+        this.aktuellerSpieler = spieler;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -44,7 +47,7 @@ public class LueckentextGUI extends BorderPane {
             if (eingabe.getText().trim().equalsIgnoreCase(korrekt)) {
                 alert.setContentText("Richtig!");
                 this.aktuelleFrage.setGeloest();
-
+                aktuellerSpieler.addPunkte(aktuelleFrage);
             } else {
                 alert.setContentText("Falsch!");
             }
@@ -63,7 +66,7 @@ public class LueckentextGUI extends BorderPane {
             alert.setOnHidden(event -> {
                 // verhinert doppeltes Auführen
                 delay.stop();
-                main.oeffneNaechsteFrageOderBeenden();
+                this.main.oeffneNaechsteFrageOderBeenden();
             });
         });
 
