@@ -1,6 +1,7 @@
 package backend;
 
 import enums.Level;
+import enums.Themenbereich;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +16,19 @@ public class Spieler {
 
     private int punktekonto;
 
-    private double fortschrittThemenbereich1;
+    private double fortschrittSQL;
 
-    private double fortschrittThemenbereich2;
+    private double fortschrittUML;
 
-    private double fortschrittThemenbereich3;
+    private double fortschrittDATENBANK;
 
-    private double fortschrittThemenbereich4;
+    private double fortschrittPSEUDOCODE;
 
-    private double fortschrittThemenbereich5;
+    private double fortschrittRECHT;
+
+    private double fortschrittMASCHINELLES_LEARNING;
+
+    private double fortschrittWIRTSCHAFT;
 
     private List<String> medallien;
 
@@ -38,51 +43,53 @@ public class Spieler {
     }
 
     public void setFortschrittThemenbereiche () {
-        this.fortschrittThemenbereich1 = 0.0;
-        this.fortschrittThemenbereich2 = 0.0;
-        this.fortschrittThemenbereich3 = 0.0;
-        this.fortschrittThemenbereich4 = 0.0;
-        this.fortschrittThemenbereich5 = 0.0;
+        this.fortschrittSQL = 0.0;
+        this.fortschrittUML = 0.0;
+        this.fortschrittDATENBANK = 0.0;
+        this.fortschrittPSEUDOCODE = 0.0;
+        this.fortschrittRECHT = 0.0;
+        this.fortschrittWIRTSCHAFT = 0.0;
+        this.fortschrittMASCHINELLES_LEARNING = 0.0;
     }
 
-    public double getFortschrittThemenbereich1() {
-        return fortschrittThemenbereich1;
+    public double getFortschrittSQL() {
+        return fortschrittSQL;
     }
 
-    public void setFortschrittThemenbereich1(double fortschrittThemenbereich1) {
-        this.fortschrittThemenbereich1 = fortschrittThemenbereich1;
+    public void setFortschrittSQL(double fortschrittSQL) {
+        this.fortschrittSQL = fortschrittSQL;
     }
 
-    public double getFortschrittThemenbereich2() {
-        return fortschrittThemenbereich2;
+    public double getFortschrittUML() {
+        return fortschrittUML;
     }
 
-    public void setFortschrittThemenbereich2(double fortschrittThemenbereich2) {
-        this.fortschrittThemenbereich2 = fortschrittThemenbereich2;
+    public void setFortschrittUML(double fortschrittUML) {
+        this.fortschrittUML = fortschrittUML;
     }
 
-    public double getFortschrittThemenbereich3() {
-        return fortschrittThemenbereich3;
+    public double getFortschrittDATENBANK() {
+        return fortschrittDATENBANK;
     }
 
-    public void setFortschrittThemenbereich3(double fortschrittThemenbereich3) {
-        this.fortschrittThemenbereich3 = fortschrittThemenbereich3;
+    public void setFortschrittDATENBANK(double fortschrittDATENBANK) {
+        this.fortschrittDATENBANK = fortschrittDATENBANK;
     }
 
-    public double getFortschrittThemenbereich4() {
-        return fortschrittThemenbereich4;
+    public double getFortschrittPSEUDOCODE() {
+        return fortschrittPSEUDOCODE;
     }
 
-    public void setFortschrittThemenbereich4(double fortschrittThemenbereich4) {
-        this.fortschrittThemenbereich4 = fortschrittThemenbereich4;
+    public void setFortschrittPSEUDOCODE(double fortschrittPSEUDOCODE) {
+        this.fortschrittPSEUDOCODE = fortschrittPSEUDOCODE;
     }
 
-    public double getFortschrittThemenbereich5() {
-        return fortschrittThemenbereich5;
+    public double getFortschrittRECHT() {
+        return fortschrittRECHT;
     }
 
-    public void setFortschrittThemenbereich5(double fortschrittThemenbereich5) {
-        this.fortschrittThemenbereich5 = fortschrittThemenbereich5;
+    public void setFortschrittRECHT(double fortschrittRECHT) {
+        this.fortschrittRECHT = fortschrittRECHT;
     }
 
     public String getName() {
@@ -131,24 +138,83 @@ public class Spieler {
         return 200;
     }
 
+    public double getFortschrittMASCHINELLES_LEARNING() {
+        return fortschrittMASCHINELLES_LEARNING;
+    }
+
+    public void setFortschrittMASCHINELLES_LEARNING(double fortschrittMASCHINELLES_LEARNING) {
+        this.fortschrittMASCHINELLES_LEARNING = fortschrittMASCHINELLES_LEARNING;
+    }
+
+    public double getFortschrittWIRTSCHAFT() {
+        return fortschrittWIRTSCHAFT;
+    }
+
+    public void setFortschrittWIRTSCHAFT(double fortschrittWIRTSCHAFT) {
+        this.fortschrittWIRTSCHAFT = fortschrittWIRTSCHAFT;
+    }
+
     public void setMedallienArray() {
-        if (fortschrittThemenbereich1 == 1) {
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\BlauMedallie.jpg");
+        if (fortschrittSQL == 1) {
+            medallien.add("Rollenspiel/src/resources/Medaille_SQL_T.png");
         }
-        if (fortschrittThemenbereich2 == 1) {
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\GrünMedallie.jpg");
+        if (fortschrittUML == 1) {
+            medallien.add("Rollenspiel/src/resources/Medaille_UML_T.png");
         }
-        if (fortschrittThemenbereich3 == 1) {
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\LilaMedallie.jpg");
+        if (fortschrittDATENBANK == 1) {
+            medallien.add("Rollenspiel/src/resources/Medaille_DATENBANKENMODELLIERUNG_T.png");
         }
-        if (fortschrittThemenbereich4 == 1) {
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\olivgrünMedallie.jpg");
+        if (fortschrittPSEUDOCODE == 1) {
+            medallien.add("Rollenspiel/src/resources/Medaille_PROGRAMMIERUNG_PSEUDOCODE_T.png");
         }
-        if (fortschrittThemenbereich5 == 1){
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\RotMedallie.jpg");
+        if (fortschrittRECHT == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_RECHT_T.png");
+        }
+        if (fortschrittMASCHINELLES_LEARNING == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_MASCHINELLES_LERNEN_T.png");
+        }
+        if (fortschrittWIRTSCHAFT == 1){
+            medallien.add("Rollenspiel/src/resources/Medaille_WIRTSCHAFT_T.png");
         }
         if (gesamtFortschritt == 1){
-            medallien.add("U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\EndbossMedallie.jpg");
+            medallien.add("Rollenspiel/src/resources/EndbossMedallie.jpg");
+        }
+    }
+
+    public List<String> getMedallien() {
+        return medallien;
+    }
+
+    public void setMedallien(List<String> medallien) {
+        this.medallien = medallien;
+    }
+
+    public void addPunkte(Frage frage) {
+        this.punktekonto += frage.getPunkte();
+
+        // Gesamtfortschritt und Level neu berechnen
+        setGesamtFortschritt();
+        setLevel();
+
+        // Themen-spezifischen Fortschritt berechnen
+        aktualisiereThemenFortschritt(frage.getThemenbereich());
+
+        // Prüfen, ob neue Medaillen dazugekommen sind
+        setMedallienArray();
+    }
+
+    private void aktualisiereThemenFortschritt(Themenbereich bereich) {
+        // Berechnung: (Beantwortete Fragen in diesem Bereich) / (Gesamtanzahl Fragen in diesem Bereich)
+        double fortschritt = FragenRepository.berechneFortschrittFuerThema(bereich);
+
+        switch (bereich) {
+            case SQL -> setFortschrittSQL(fortschritt);
+            case UML -> setFortschrittUML(fortschritt);
+            case DATENBANK -> setFortschrittDATENBANK(fortschritt);
+            case PSEUDOCODE -> setFortschrittPSEUDOCODE(fortschritt);
+            case RECHT -> setFortschrittRECHT(fortschritt);
+            case WIRTSCHAFT -> setFortschrittWIRTSCHAFT(fortschritt);
+            case MASCHINELLESLEARNING -> setFortschrittMASCHINELLES_LEARNING(fortschritt);
         }
     }
 }

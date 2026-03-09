@@ -1,6 +1,7 @@
 package gui;
 
 import backend.Frage;
+import backend.FragenController;
 import backend.FragenRepository;
 import enums.Themenbereich;
 
@@ -20,22 +21,33 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
+import backend.Spieler;
+
 public class Startbildschirm extends Application {
 
+    private FragenController fragenController;
+    private Stage stage;
     private static final String ABSOLUTE_PATH =
-            "U:\\Documents\\workspace\\3.Jahr\\java\\Projekt\\Rollenspiel\\src\\resources\\Designer.png";
+            "Rollenspiel/src/resources/Designer.png";
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 450;
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 600;
     private static final double SPLASH_SECONDS = 2.5;
 
     private static final String SOLID_BG_HEX = "#2EA3A3";
 
     private Scene startScene;
     private Scene themenScene;
+    private Scene profilScene;
+
+    private Spieler aktuellerSpieler;
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
+
+        // Spieler erst mal "leer" anlegen
+        this.aktuellerSpieler = new Spieler("");
 
         Image bgImage = new Image(
                 new File(ABSOLUTE_PATH).toURI().toString(),
@@ -45,17 +57,73 @@ public class Startbildschirm extends Application {
         StackPane splashRoot = createSplashRoot(bgImage);
         Scene splashScene = new Scene(splashRoot, WIDTH, HEIGHT, Color.BLACK);
 
+        // Hier liegt die Magie: Wir fügen das Namens-Feld in das Start-Root ein
         StackPane startRoot = createStartRoot(bgImage);
+        showNameInputOverlay(startRoot); // Das PopUp wird hier drübergelegt
+
         startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
+        // ... Rest wie gehabt (ThemenScene, ProfilScene)
         VBox themenVBox = createThemenRoot();
         themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
+
+        // Wichtig: ProfilScene hier noch nicht final erstellen,
+        // da der Name erst später kommt!
 
         stage.setTitle("Gamification – Lernspiel");
         stage.setScene(splashScene);
         stage.show();
 
         runSplashSequence(stage, splashScene, startScene);
+    }
+
+    private void showNameInputOverlay(StackPane root) {
+        // Dunkler Hintergrund für den Fokus
+        Region blurBg = new Region();
+        blurBg.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
+
+        // Die Eingabebox
+        VBox inputContainer = new VBox(20);
+        inputContainer.setAlignment(Pos.CENTER);
+        inputContainer.setMaxSize(400, 250);
+        inputContainer.setStyle("-fx-background-color: #2EA3A3; -fx-background-radius: 20; -fx-border-color: white; -fx-border-width: 2;");
+        inputContainer.setPadding(new Insets(30));
+
+        Label frage = new Label("Wie lautet dein Name?");
+        frage.setStyle("-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;");
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Dein Name...");
+        nameField.setStyle("-fx-font-size: 18px; -fx-background-radius: 10; -fx-padding: 10;");
+        // Erlaubt das Bestätigen durch Drücken der Enter-Taste
+        Button confirmBtn = new Button("Bestätigen");
+        nameField.setOnAction(e -> confirmBtn.fire());
+        confirmBtn.setStyle(buttonMain()); // Nutzt dein vorhandenes Button-Styling
+
+        inputContainer.getChildren().addAll(frage, nameField, confirmBtn);
+
+        // Alles zum Root hinzufügen
+        root.getChildren().addAll(blurBg, inputContainer);
+
+        // Logik beim Klicken
+        confirmBtn.setOnAction(e -> {
+            String name = nameField.getText().trim();
+            if (!name.isEmpty()) {
+                aktuellerSpieler.setName(name);
+
+                // Profilseite erst jetzt mit dem richtigen Namen bauen
+                profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
+
+                // Animation: Overlay ausfaden
+                FadeTransition ft = new FadeTransition(Duration.millis(400), blurBg);
+                FadeTransition ft2 = new FadeTransition(Duration.millis(400), inputContainer);
+                ft.setToValue(0);
+                ft2.setToValue(0);
+                ft2.setOnFinished(ev -> root.getChildren().removeAll(blurBg, inputContainer));
+                ft.play();
+                ft2.play();
+            }
+        });
     }
 
     // ---------- Splash ----------
@@ -88,6 +156,8 @@ public class Startbildschirm extends Application {
         VBox overlayBox = new VBox(12, titel, startButton);
         overlayBox.setPadding(new Insets(16));
         overlayBox.setAlignment(Pos.CENTER);
+        titel.setTranslateY(-30);
+        startButton.setTranslateY(120);
 
         Region overlayBackground = new Region();
         overlayBackground.setStyle("-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;");
@@ -145,16 +215,60 @@ public class Startbildschirm extends Application {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.setSpacing(15);
-        vbox.setPadding(new Insets(30, 0, 0, 0));
+        // Padding oben etwas verringern, da der Header nun Platz einnimmt
+        vbox.setPadding(new Insets(10, 0, 0, 0));
 
         vbox.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
+        // --- Header mit Home- und Profil-Button ---
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(10, 20, 0, 20));
+
+        // Home Button (Links oben)
+        Button homeBtn = new Button("🏠 Home");
+        homeBtn.setFocusTraversable(false);
+        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        AnchorPane.setLeftAnchor(homeBtn, 10.0);
+        AnchorPane.setTopAnchor(homeBtn, 0.0);
+
+        // Profil Button (Rechts oben)
+        Button profilBtn = new Button("👤 Profil");
+        profilBtn.setFocusTraversable(false);
+        profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        AnchorPane.setRightAnchor(profilBtn, 10.0);
+        AnchorPane.setTopAnchor(profilBtn, 0.0);
+
+        homeBtn.setOnAction(e -> {
+            // Deine bestehende Home-Logik
+            FadeTransition ft = new FadeTransition(Duration.millis(300), themenScene.getRoot());
+            ft.setFromValue(1.0);
+            ft.setToValue(0.0);
+            ft.setOnFinished(ev -> {
+                stage.setScene(startScene);
+                startScene.getRoot().setOpacity(0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            });
+            ft.play();
+        });
+
+        profilBtn.setOnAction(e -> {
+            // Erstellt die Scene neu mit den aktuellen Werten aus 'aktuellerSpieler'
+            profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
+            stage.setScene(profilScene);
+        });
+
+        header.getChildren().addAll(homeBtn, profilBtn);
+// ------------------------------------------
+
         Label auswahlLabel = new Label("Wähle einen Themenbereich:");
         auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        vbox.getChildren().add(auswahlLabel);
+        // Zuerst den Header, dann das Label und die Buttons hinzufügen
+        vbox.getChildren().addAll(header, auswahlLabel);
 
         for (Themenbereich tb : Themenbereich.values()) {
             Button btn = createThemeButton(tb.name());
@@ -167,44 +281,194 @@ public class Startbildschirm extends Application {
 
     // ---------- Logik aus Swing: Fragen laden ----------
     private void ladeFragenUndÖffne(Themenbereich thema) {
-        List<Frage> fragen = FragenRepository.getAlleFragen().stream()
-                .filter(f -> f.getThemenbereich() == thema)
-                .toList();
+        List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Glückwunsch!");
             alert.setHeaderText(null);
-            alert.setContentText("Keine Fragen für dieses Thema gefunden.");
+            alert.setContentText("Du hast bereits alle Fragen zu " + thema + " beantwortet!");
             alert.showAndWait();
             return;
         }
 
-        öffneFrageGUI(fragen.get(0));
+        this.fragenController = new FragenController(fragen);
+        öffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
     private void öffneFrageGUI(Frage frage) {
+        VBox frageRoot = new VBox(20);
+        frageRoot.setAlignment(Pos.TOP_CENTER); // Von Center auf TOP_CENTER ändern
+        frageRoot.setPadding(new Insets(10, 0, 40, 0));
+        frageRoot.setBackground(new Background(new BackgroundFill(Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        Pane panel;
+        // Header für Abbruch
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(10, 20, 0, 20));
 
+        Button cancelBtn = new Button("✕ Abbrechen");
+        cancelBtn.setFocusTraversable(false);
+        cancelBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        cancelBtn.setOnAction(e -> stage.setScene(themenScene));
+
+        AnchorPane.setLeftAnchor(cancelBtn, 10.0);
+        AnchorPane.setTopAnchor(cancelBtn, 0.0);
+        header.getChildren().add(cancelBtn);
+
+        // Frage-Inhalt (muss jetzt in eine eigene Box, damit er zentriert bleibt)
+        VBox content = new VBox(20);
+        content.setAlignment(Pos.CENTER);
+        VBox.setVgrow(content, Priority.ALWAYS);
+
+        Pane spezifischesPanel;
         switch (frage.getFragenkategorie()) {
-            case MULTIPLE_CHOICE -> panel = new MultipleChoiceGUI(frage);
-            case WAHR_FALSCH -> panel = new WahrFalschGUI(frage);
-            case LUECKENTEXT -> panel = new LueckentextGUI(frage);
-            default -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText(null);
-                alert.setContentText("Unbekannte Fragenkategorie!");
-                alert.showAndWait();
-                return;
+            case MULTIPLE_CHOICE -> spezifischesPanel = new MultipleChoiceGUI(frage, this, aktuellerSpieler);
+            case WAHR_FALSCH     -> spezifischesPanel = new WahrFalschGUI(frage, this, aktuellerSpieler);
+            case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this, aktuellerSpieler);
+            default -> { return; }
+        }
+        spezifischesPanel.setStyle("-fx-background-color: transparent;");
+        content.getChildren().add(spezifischesPanel);
+
+        frageRoot.getChildren().addAll(header, content);
+        stage.setScene(new Scene(frageRoot, WIDTH, HEIGHT));
+    }
+
+    public void oeffneNaechsteFrageOderBeenden() {
+        if (fragenController.hatNaechsteFrage()) {
+            fragenController.naechsteFrage();
+            öffneFrageGUI(fragenController.getAktuelleFrage());
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText("Alle Fragen beantwortet!");
+            alert.showAndWait();
+
+            // zurück zum Themenbildschirm
+            stage.setScene(themenScene);
+        }
+    }
+
+    private VBox createProfilRoot() {
+        VBox root = new VBox(15);
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setPadding(new Insets(10, 20, 0, 20));
+        root.setBackground(new Background(new BackgroundFill(
+                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+        )));
+
+        // --- Header ---
+        AnchorPane header = new AnchorPane();
+        header.setPadding(new Insets(10, 20, 0, 20));
+
+        Button backBtn = new Button("← Zurück");
+        backBtn.setFocusTraversable(false);
+        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        backBtn.setOnAction(e -> stage.setScene(themenScene));
+
+        AnchorPane.setLeftAnchor(backBtn, 10.0);
+        AnchorPane.setTopAnchor(backBtn, 0.0);
+        header.getChildren().add(backBtn);
+
+        // --- Titel ---
+        Label titel = new Label("Hallo, " + aktuellerSpieler.getName());
+        titel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        // --- Allgemeine Stats (Level & Punkte) ---
+        HBox generalStats = new HBox(40);
+        generalStats.setAlignment(Pos.CENTER);
+        generalStats.setStyle("-fx-background-color: rgba(0,0,0,0.15); -fx-padding: 10; -fx-background-radius: 10;");
+
+        Label levelLabel = new Label("Rang: " + aktuellerSpieler.getLevel());
+        Label punkteLabel = new Label("Punkte: " + aktuellerSpieler.getPunktekonto());
+        levelLabel.setStyle("-fx-text-fill: #f1c40f; -fx-font-weight: bold; -fx-font-size: 16px;");
+        punkteLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+
+        generalStats.getChildren().addAll(levelLabel, punkteLabel);
+
+        // --- Themen-Fortschritte (Grid) ---
+        GridPane progressGrid = new GridPane();
+        progressGrid.setHgap(15);
+        progressGrid.setVgap(8);
+        progressGrid.setAlignment(Pos.CENTER);
+        progressGrid.setMaxWidth(500);
+        progressGrid.setPadding(new Insets(10));
+        progressGrid.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10;");
+
+        // Wir erstellen eine kleine Hilfsfunktion oder schleifen durch die 5 Bereiche
+        addProgressRow(progressGrid, "SQL", aktuellerSpieler.getFortschrittSQL(), 0);
+        addProgressRow(progressGrid, "UML", aktuellerSpieler.getFortschrittUML(), 1);
+        addProgressRow(progressGrid, "DATENBANK", aktuellerSpieler.getFortschrittDATENBANK(), 2);
+        addProgressRow(progressGrid, "PSEUDOCODE", aktuellerSpieler.getFortschrittPSEUDOCODE(), 3);
+        addProgressRow(progressGrid, "RECHT", aktuellerSpieler.getFortschrittRECHT(), 4);
+        addProgressRow(progressGrid, "WIRTSCHAFT", aktuellerSpieler.getFortschrittWIRTSCHAFT(), 5);
+        addProgressRow(progressGrid, "MASCHINELLES LERNEN", aktuellerSpieler.getFortschrittMASCHINELLES_LEARNING(), 6);
+
+        // --- Gesamtfortschritt ---
+        VBox gesamtBox = new VBox(5);
+        gesamtBox.setAlignment(Pos.CENTER);
+        Label gesamtLabel = new Label("Gesamtfortschritt");
+        gesamtLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        ProgressBar gesamtBar = new ProgressBar(aktuellerSpieler.getGesamtFortschritt());
+        gesamtBar.setPrefWidth(400);
+        gesamtBar.setStyle("-fx-accent: #27ae60;"); // Ein schönes Grün
+        gesamtBox.getChildren().addAll(gesamtLabel, gesamtBar);
+
+        // --- Medaillen ---
+        Label medTitel = new Label("Deine Erfolge:");
+        medTitel.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+
+        HBox medailenGalerie = new HBox(15); // Abstand leicht erhöht für bessere Optik
+        medailenGalerie.setAlignment(Pos.CENTER);
+        // Erhöhe die PrefHeight, damit die größeren Bilder Platz haben (z.B. auf 120)
+        medailenGalerie.setPrefHeight(120);
+
+        for (String pfad : aktuellerSpieler.getMedallien()) {
+            try {
+                Image img = new Image(new File(pfad).toURI().toString());
+                ImageView iv = new ImageView(img);
+
+                // --- HIER DIE NEUE GRÖSSE ---
+                iv.setFitHeight(100); // Vorher 50
+                iv.setFitWidth(100);  // Vorher 50
+
+                iv.setPreserveRatio(true);
+                iv.setSmooth(true);    // Macht die Kanten bei der Skalierung schöner
+
+                medailenGalerie.getChildren().add(iv);
+            } catch (Exception e) {
+                // Falls ein Pfad nicht stimmt, einfach ignorieren
             }
         }
 
-        Stage frageStage = new Stage();
-        frageStage.setTitle("Frage");
-        frageStage.setScene(new Scene(panel, 600, 400));
-        frageStage.show();
+        if (medailenGalerie.getChildren().isEmpty()) {
+            Label leer = new Label("Noch keine Medaillen vorhanden.");
+            leer.setStyle("-fx-text-fill: rgba(255,255,255,0.4);");
+            medailenGalerie.getChildren().add(leer);
+        }
+
+        root.getChildren().addAll(header, titel, generalStats, progressGrid, gesamtBox, medTitel, medailenGalerie);
+        return root;
     }
+
+    // Hilfsmethode für die Zeilen im Grid
+    private void addProgressRow(GridPane grid, String labelText, double value, int row) {
+        Label lbl = new Label(labelText);
+        lbl.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
+
+        ProgressBar pb = new ProgressBar(value);
+        pb.setPrefWidth(250);
+        pb.setStyle("-fx-accent: #3498db;"); // Blau für die Themenbereiche
+
+        Label prozentLbl = new Label((int)(value * 100) + "%");
+        prozentLbl.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+
+        grid.add(lbl, 0, row);
+        grid.add(pb, 1, row);
+        grid.add(prozentLbl, 2, row);
+    }
+
 
     // ---------- Styling ----------
     private String buttonMain() {
@@ -253,6 +517,7 @@ public class Startbildschirm extends Application {
                                 + "-fx-border-width: 2;"
                 )
         );
+        btn.setFocusTraversable(false);
 
         return btn;
     }

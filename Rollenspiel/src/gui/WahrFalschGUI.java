@@ -2,14 +2,25 @@ package gui;
 
 import backend.Antwort;
 import backend.Frage;
+import backend.Spieler;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 
 public class WahrFalschGUI extends BorderPane {
 
-    public WahrFalschGUI(Frage frage) {
+    private final Startbildschirm main;
+    private final Frage aktuelleFrage;
+    private final Spieler aktuellerSpieler;
+
+    public WahrFalschGUI(Frage frage, Startbildschirm main, Spieler spieler) {
+
+        this.main = main;
+        this.aktuelleFrage = frage;
+        this.aktuellerSpieler = spieler;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -23,9 +34,10 @@ public class WahrFalschGUI extends BorderPane {
 
         for (Antwort antwort : frage.getAntworten()) {
             Button btn = new Button(antwort.getAntwort());
-            btn.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+            btn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
             btn.setOnAction(e -> pruefeAntwort(antwort));
             buttonBox.getChildren().add(btn);
+            btn.setFocusTraversable(false);
         }
 
         setCenter(buttonBox);
@@ -37,10 +49,27 @@ public class WahrFalschGUI extends BorderPane {
 
         if (antwort.isRichtig()) {
             alert.setContentText("Richtig!");
+            aktuelleFrage.setGeloest();
+            aktuellerSpieler.addPunkte(aktuelleFrage);
         } else {
             alert.setContentText("Falsch!");
         }
 
-        alert.showAndWait();
+        alert.show();
+
+        // Timer zum automatischen Schließen des Pop-ups und Weiterleitung
+        PauseTransition delay = new PauseTransition(Duration.seconds(3));
+        delay.setOnFinished(event -> {
+            alert.close();
+            main.oeffneNaechsteFrageOderBeenden();
+        });
+        delay.play();
+
+        // Weiterleitung bei manuellen Schließen des Pop-ups
+        alert.setOnHidden(event -> {
+            // verhinert doppeltes Auführen
+            delay.stop();
+            main.oeffneNaechsteFrageOderBeenden();
+        });
     }
 }

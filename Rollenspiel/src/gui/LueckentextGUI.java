@@ -1,14 +1,25 @@
 package gui;
 
 import backend.Frage;
+import backend.Spieler;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 
 public class LueckentextGUI extends BorderPane {
 
-    public LueckentextGUI(Frage frage) {
+    private final Startbildschirm main;
+    private final Frage aktuelleFrage;
+    private final Spieler aktuellerSpieler;
+
+    public LueckentextGUI(Frage frage, Startbildschirm main, Spieler spieler) {
+
+        this.main = main;
+        this.aktuelleFrage = frage;
+        this.aktuellerSpieler = spieler;
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
@@ -23,7 +34,12 @@ public class LueckentextGUI extends BorderPane {
         BorderPane.setMargin(eingabe, new Insets(20));
 
         Button pruefen = new Button("Prüfen");
-        pruefen.setStyle("-fx-font-size: 18px; -fx-padding: 10px 20px;");
+        pruefen.setDefaultButton(true);
+        pruefen.setStyle("-fx-font-size: 20px;"
+                        + "-fx-background-color: #Ffffff;"
+                        + "-fx-text-fill: black;"
+                        + "-fx-padding: 10px 44px;"
+                        + "-fx-background-radius: 10;");
         pruefen.setOnAction(e -> {
             String korrekt = frage.getKorrekteAntwort();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -31,11 +47,28 @@ public class LueckentextGUI extends BorderPane {
 
             if (eingabe.getText().trim().equalsIgnoreCase(korrekt)) {
                 alert.setContentText("Richtig!");
+                this.aktuelleFrage.setGeloest();
+                aktuellerSpieler.addPunkte(aktuelleFrage);
             } else {
                 alert.setContentText("Falsch!");
             }
 
-            alert.showAndWait();
+            alert.show();
+
+            // Timer zum automatischen Schließen des Pop-ups und Weiterleitung
+            PauseTransition delay = new PauseTransition(Duration.seconds(3));
+            delay.setOnFinished(event -> {
+                alert.close();
+                main.oeffneNaechsteFrageOderBeenden();
+            });
+            delay.play();
+
+            // Weiterleitung bei manuellen Schließen des Pop-ups
+            alert.setOnHidden(event -> {
+                // verhinert doppeltes Auführen
+                delay.stop();
+                this.main.oeffneNaechsteFrageOderBeenden();
+            });
         });
 
         setBottom(pruefen);
