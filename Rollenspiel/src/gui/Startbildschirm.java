@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -212,19 +213,17 @@ public class Startbildschirm extends Application {
 
     // ---------- Themenbereiche ----------
     private VBox createThemenRoot() {
-        VBox vbox = new VBox();
-        vbox.setAlignment(Pos.TOP_CENTER);
-        vbox.setSpacing(15);
-        // Padding oben etwas verringern, da der Header nun Platz einnimmt
-        vbox.setPadding(new Insets(10, 0, 0, 0));
-
-        vbox.setBackground(new Background(new BackgroundFill(
+        var root = new VBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setSpacing(30);
+        root.setPadding(new Insets(0, 0, 40, 0)); // Padding unten für Scroll-Freiraum
+        root.setBackground(new Background(new BackgroundFill(
                 Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        // --- Header mit Home- und Profil-Button ---
-        AnchorPane header = new AnchorPane();
-        header.setPadding(new Insets(10, 20, 0, 20));
+        // --- Header ---
+        var header = new AnchorPane();
+        header.setPadding(new Insets(20, 30, 10, 30));
 
         // Home Button (Links oben)
         Button homeBtn = new Button("🏠 Home");
@@ -233,51 +232,99 @@ public class Startbildschirm extends Application {
         AnchorPane.setLeftAnchor(homeBtn, 10.0);
         AnchorPane.setTopAnchor(homeBtn, 0.0);
 
-        // Profil Button (Rechts oben)
         Button profilBtn = new Button("👤 Profil");
         profilBtn.setFocusTraversable(false);
         profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
         AnchorPane.setRightAnchor(profilBtn, 10.0);
         AnchorPane.setTopAnchor(profilBtn, 0.0);
 
-        homeBtn.setOnAction(e -> {
-            // Deine bestehende Home-Logik
-            FadeTransition ft = new FadeTransition(Duration.millis(300), themenScene.getRoot());
+        // Navigation Logik (Unnamed Variable '_' für ActionEvent)
+        homeBtn.setOnAction(_ -> {
+            var ft = new FadeTransition(Duration.millis(300), root);
             ft.setFromValue(1.0);
             ft.setToValue(0.0);
-            ft.setOnFinished(ev -> {
+            ft.setOnFinished(_ -> {
                 stage.setScene(startScene);
                 startScene.getRoot().setOpacity(0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
+                var fadeIn = new FadeTransition(Duration.millis(300), startScene.getRoot());
                 fadeIn.setToValue(1.0);
                 fadeIn.play();
             });
             ft.play();
         });
 
-        profilBtn.setOnAction(e -> {
-            // Erstellt die Scene neu mit den aktuellen Werten aus 'aktuellerSpieler'
+        profilBtn.setOnAction(_ -> {
             profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
             stage.setScene(profilScene);
         });
 
         header.getChildren().addAll(homeBtn, profilBtn);
-// ------------------------------------------
 
-        Label auswahlLabel = new Label("Wähle einen Themenbereich:");
-        auswahlLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+        // --- Titel-Bereich ---
+        var titleBox = new VBox(10);
+        titleBox.setAlignment(Pos.CENTER);
+        var auswahlLabel = new Label("Wähle einen Themenbereich");
+        auswahlLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;");
+        var subLabel = new Label("Meistere alle Fragen, um neue Medaillen zu verdienen!");
+        subLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.8);");
+        titleBox.getChildren().addAll(auswahlLabel, subLabel);
 
-        // Zuerst den Header, dann das Label und die Buttons hinzufügen
-        vbox.getChildren().addAll(header, auswahlLabel);
+        // --- Themen-Grid (Die Kacheln) ---
+        var flowPane = new FlowPane();
+        flowPane.setAlignment(Pos.CENTER);
+        flowPane.setHgap(25);
+        flowPane.setVgap(25);
+        flowPane.setPadding(new Insets(20, 40, 20, 40));
 
-        for (Themenbereich tb : Themenbereich.values()) {
-            Button btn = createThemeButton(tb.name());
-            btn.setOnAction(e -> ladeFragenUndÖffne(tb));
-            vbox.getChildren().add(btn);
+        // Iteriere über die Enum-Werte für die Kacheln
+        for (var tb : Themenbereich.values()) {
+            var btn = createThemeTile(tb);
+            flowPane.getChildren().add(btn);
         }
 
-        return vbox;
+        // ScrollPane, falls die Liste bei kleineren Bildschirmen zu lang wird
+        var scrollPane = new ScrollPane(flowPane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        scrollPane.setPannable(true); // Erlaubt "Ziehen" mit der Maus wie am Handy
+
+        root.getChildren().addAll(header, titleBox, scrollPane);
+        return root;
     }
+
+    // Hilfsmethode für die modernen Kacheln
+    private Button createThemeTile(Themenbereich tb) {
+        var btn = new Button(tb.getName());
+        btn.setPrefSize(200, 140);
+        btn.setWrapText(true);
+        btn.setTextAlignment(TextAlignment.CENTER);
+        btn.setFocusTraversable(false);
+
+        // Glassmorphism Style
+        String baseStyle =
+                "-fx-background-color: rgba(255, 255, 255, 0.15);" +
+                        "-fx-background-radius: 20;" +
+                        "-fx-border-color: rgba(255, 255, 255, 0.3);" +
+                        "-fx-border-radius: 20;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 18px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-cursor: hand;";
+
+        btn.setStyle(baseStyle);
+
+        // Hover-Effekte mit Java 25 Unnamed Variables
+        btn.setOnMouseEntered(_ -> btn.setStyle(baseStyle + "-fx-background-color: rgba(255, 255, 255, 0.25); -fx-scale-x: 1.05; -fx-scale-y: 1.05;"));
+        btn.setOnMouseExited(_ -> btn.setStyle(baseStyle));
+
+        btn.setOnAction(_ -> ladeFragenUndÖffne(tb));
+
+        return btn;
+    }
+
+
 
     // ---------- Logik aus Swing: Fragen laden ----------
     private void ladeFragenUndÖffne(Themenbereich thema) {
