@@ -8,6 +8,7 @@ public enum Themenbereich {
     RECHT("Recht"),
     WIRTSCHAFT("Wirtschaft"),
     MASCHINELLESLEARNING("Maschinelles Lernen"),
+    KEINTHEMA("Für Tests")
     ;
     private final String name;
 

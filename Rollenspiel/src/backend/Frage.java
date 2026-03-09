@@ -77,6 +77,11 @@ public class Frage {
             default -> null;
         };
     }
+    // um die Methode ermittleKategorie testen zu können
+    public Fragenkategorie kategorie() {
+        return ermittleKategorie();
+    }
+
 
     public String getKorrekteAntwort() {
         return antworten.stream()
