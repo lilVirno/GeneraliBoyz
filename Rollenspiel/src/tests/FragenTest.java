@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FragenTest {
 
     @Test
-    void testKategorieLueckentext() {
+    void testErmittleKategorieLueckentext() {
         List<Antwort> antworten = List.of(
                 new Antwort(true, "Wahr")
         );
@@ -22,7 +22,7 @@ public class FragenTest {
 
     }
     @org.junit.jupiter.api.Test
-    void testKategorieWahrFalsch() {
+    void testErmittleKategorieWahrFalsch() {
         List<Antwort> antworten = List.of(
                 new Antwort(true, "Wahr"),
                 new Antwort(true, "falsch")
@@ -34,7 +34,7 @@ public class FragenTest {
     }
 
     @org.junit.jupiter.api.Test
-    void testKategorieMultipleChoice() {
+    void testErmittleKategorieMultipleChoice() {
         List<Antwort> antworten = List.of(
                 new Antwort(true, "Wahr"),
                 new Antwort(false, "falsch"),
