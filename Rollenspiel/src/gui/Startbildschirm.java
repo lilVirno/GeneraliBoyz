@@ -1,8 +1,6 @@
 package gui;
 
-import backend.Frage;
-import backend.FragenController;
-import backend.FragenRepository;
+import backend.*;
 import enums.Themenbereich;
 
 import javafx.animation.*;
@@ -21,12 +19,11 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
-import backend.Spieler;
-
 public class Startbildschirm extends Application {
 
     private FragenController fragenController;
     private Stage stage;
+    private GapField gapField;
     private static final String ABSOLUTE_PATH =
             "Rollenspiel/src/resources/Designer.png";
 
@@ -45,10 +42,9 @@ public class Startbildschirm extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-
+        this.gapField= new GapField();
         // Spieler erst mal "leer" anlegen
         this.aktuellerSpieler = new Spieler("");
-
         Image bgImage = new Image(
                 new File(ABSOLUTE_PATH).toURI().toString(),
                 WIDTH, HEIGHT, true, true

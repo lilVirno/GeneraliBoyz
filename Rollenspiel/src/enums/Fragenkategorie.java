@@ -3,7 +3,8 @@ package enums;
 public enum Fragenkategorie {
     MULTIPLE_CHOICE("multiple choice"),
     WAHR_FALSCH("wahr/falsch"),
-    LUECKENTEXT("Lückentext")
+    LUECKENTEXT("Lückentext"),
+    GAPFIELD("Gaps")
     ;
 
     private final String kategorie;
