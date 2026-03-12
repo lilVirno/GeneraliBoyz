@@ -13,6 +13,9 @@ public class Frage {
     private List<Antwort> antworten;
     private boolean geloest = false;
     private int punkte;
+    private List<GapField> gapFields;
+
+
 
     public Frage(int dbID, Themenbereich themenbereich, Fragenkategorie fragenkategorie, String frage, List<Antwort> antworten, int punkte) {
         this.dbID = dbID;
@@ -22,6 +25,8 @@ public class Frage {
         this.antworten = antworten;
         this.punkte = punkte;
     }
+
+
 
     public int getDbID() {
         return dbID;
@@ -59,6 +64,14 @@ public class Frage {
         this.antworten = antworten;
     }
 
+    public List<GapField> gapFields() {
+        return gapFields;
+    }
+
+    public void setGapField(List<GapField> gapFields) {
+        this.gapFields = gapFields;
+    }
+
     public boolean isGeloest() {
         return geloest;
     }
@@ -76,11 +89,22 @@ public class Frage {
     }
 
 
-    public String getKorrekteAntwort() {
+
+
+    public List<String> getKorrekteAntworten() {
         return antworten.stream()
                 .filter(Antwort::isRichtig)
                 .map(Antwort::getAntwort)
-                .findFirst()
-                .orElse("Keine korrekte backend.Antwort hinterlegt.");
+                .toList();
+    }
+
+    // Hilfsmethode: zähle Vorkommen eines Substrings
+    public static int countOccurrences(String text, String token) {
+        int count = 0, idx = 0;
+        while ((idx = text.indexOf(token, idx)) != -1) {
+            count++;
+            idx += token.length();
+        }
+        return count;
     }
 }
