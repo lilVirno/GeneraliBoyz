@@ -1,8 +1,6 @@
 package gui;
 
-import backend.Frage;
-import backend.FragenController;
-import backend.FragenRepository;
+import backend.*;
 import enums.Themenbereich;
 
 import javafx.animation.*;
@@ -21,8 +19,6 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.List;
-
-import backend.Spieler;
 
 public class Startbildschirm extends Application {
 
@@ -570,6 +566,7 @@ public class Startbildschirm extends Application {
     }
 
     public static void main(String[] args) {
+        DatabaseController.setupDatabase();
         launch();
     }
 }
