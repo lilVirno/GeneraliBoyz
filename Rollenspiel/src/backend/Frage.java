@@ -6,6 +6,7 @@ import enums.Themenbereich;
 import java.util.List;
 
 public class Frage {
+    private int dbID;
     private Themenbereich themenbereich;
     private Fragenkategorie fragenkategorie;
     private String frage;
@@ -13,12 +14,17 @@ public class Frage {
     private boolean geloest = false;
     private int punkte;
 
-    public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten, int punkte) {
+    public Frage(int dbID, Themenbereich themenbereich, Fragenkategorie fragenkategorie, String frage, List<Antwort> antworten, int punkte) {
+        this.dbID = dbID;
         this.themenbereich = themenbereich;
+        this.fragenkategorie = fragenkategorie;
         this.frage = frage;
         this.antworten = antworten;
-        this.fragenkategorie = ermittleKategorie();
         this.punkte = punkte;
+    }
+
+    public int getDbID() {
+        return dbID;
     }
 
     public Themenbereich getThemenbereich() {
@@ -69,14 +75,6 @@ public class Frage {
         this.punkte = punkte;
     }
 
-    private Fragenkategorie ermittleKategorie() {
-        return switch (antworten.size()) {
-            case 1 -> Fragenkategorie.LUECKENTEXT;
-            case 2 -> Fragenkategorie.WAHR_FALSCH;
-            case 4 -> Fragenkategorie.MULTIPLE_CHOICE;
-            default -> null;
-        };
-    }
 
     public String getKorrekteAntwort() {
         return antworten.stream()
