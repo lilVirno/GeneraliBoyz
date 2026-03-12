@@ -6,6 +6,7 @@ import enums.Themenbereich;
 import java.util.List;
 
 public class Frage {
+    private int dbID;
     private Themenbereich themenbereich;
     private Fragenkategorie fragenkategorie;
     private String frage;
@@ -16,15 +17,20 @@ public class Frage {
 
 
 
-    public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten, int punkte) {
+    public Frage(int dbID, Themenbereich themenbereich, Fragenkategorie fragenkategorie, String frage, List<Antwort> antworten, int punkte) {
+        this.dbID = dbID;
         this.themenbereich = themenbereich;
+        this.fragenkategorie = fragenkategorie;
         this.frage = frage;
         this.antworten = antworten;
-        this.fragenkategorie = ermittleKategorie();
         this.punkte = punkte;
     }
 
 
+
+    public int getDbID() {
+        return dbID;
+    }
 
     public Themenbereich getThemenbereich() {
         return themenbereich;
@@ -82,43 +88,6 @@ public class Frage {
         this.punkte = punkte;
     }
 
-//    private Fragenkategorie ermittleKategorie() {
-//
-//
-//        if (gapFields != null && !gapFields.isEmpty()) {
-//            return Fragenkategorie.GAPFIELD;
-//        }
-//
-//
-//        return switch (antworten.size()) {
-//            case 1 -> Fragenkategorie.LUECKENTEXT;
-//            case 2 -> Fragenkategorie.WAHR_FALSCH;
-//            case 4 -> Fragenkategorie.MULTIPLE_CHOICE;
-//            default -> null;
-//        };
-//    }
-
-
-    private Fragenkategorie ermittleKategorie() {
-
-        // 1. Wenn GapFields genutzt werden → eigene Kategorie
-        if (gapFields != null && !gapFields.isEmpty()) {
-            return Fragenkategorie.LUECKENTEXT;
-        }
-
-        // 2. Wenn Text Lücken "____" enthält → Lückentext
-        int luecken = countOccurrences(frage, "____");
-        if (luecken > 0) {
-            return Fragenkategorie.LUECKENTEXT;
-        }
-
-        // 3. Normale Fragen (MC / Wahr-Falsch)
-        return switch (antworten.size()) {
-            case 2 -> Fragenkategorie.WAHR_FALSCH;
-            case 4 -> Fragenkategorie.MULTIPLE_CHOICE;
-            default -> null;
-        };
-    }
 
 
 
