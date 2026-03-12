@@ -103,7 +103,7 @@ public class Frage {
 
         // 1. Wenn GapFields genutzt werden → eigene Kategorie
         if (gapFields != null && !gapFields.isEmpty()) {
-            return Fragenkategorie.GAPFIELD;
+            return Fragenkategorie.LUECKENTEXT;
         }
 
         // 2. Wenn Text Lücken "____" enthält → Lückentext
