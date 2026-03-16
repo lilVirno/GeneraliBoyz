@@ -26,26 +26,12 @@ public class Frage {
         this.punkte = punkte;
     }
 
-
-
-    public int getDbID() {
-        return dbID;
-    }
-
     public Themenbereich getThemenbereich() {
         return themenbereich;
     }
 
-    public void setThemenbereich(Themenbereich themenbereich) {
-        this.themenbereich = themenbereich;
-    }
-
     public Fragenkategorie getFragenkategorie() {
         return fragenkategorie;
-    }
-
-    public void setFragenkategorie(Fragenkategorie fragenkategorie) {
-        this.fragenkategorie = fragenkategorie;
     }
 
     public String getFrage() {
@@ -58,18 +44,6 @@ public class Frage {
 
     public List<Antwort> getAntworten() {
         return antworten;
-    }
-
-    public void setAntworten(List<Antwort> antworten) {
-        this.antworten = antworten;
-    }
-
-    public List<GapField> gapFields() {
-        return gapFields;
-    }
-
-    public void setGapField(List<GapField> gapFields) {
-        this.gapFields = gapFields;
     }
 
     public boolean isGeloest() {
