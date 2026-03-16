@@ -1,90 +1,102 @@
 package tests;
+import backend.Antwort;
 import backend.Frage;
 import backend.FragenRepository;
+import enums.Fragenkategorie;
 import enums.Themenbereich;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class FragenRepositoryTest {
 
-    @BeforeEach
-    void resetMockDaten() {
-        // sorgt dafür, dass getAlleFragen() die Liste neu initialisiert
-        FragenRepository.alleFragen = null;
-    }
-
-    // Falls die Datenbank da ist und der Zugriff auf die Mockdaten nicht nötig ist
     @Test
-    void getAlleFragen_sollImmerDieselbeListeZurueckgeben() {
+    void getAlleFragen_LädtFragenNurEinmal() {
+        // Act
+        List<Frage> firstCall = FragenRepository.getAlleFragen();
+        List<Frage> secondCall = FragenRepository.getAlleFragen();
 
-        List<Frage> fragen1 = FragenRepository.getAlleFragen();
-        List<Frage> fragen2 = FragenRepository.getAlleFragen();
-        assertSame(fragen1, fragen2);
+        // Assert
+        assertSame(firstCall, secondCall, "Beim zweiten Aufruf darf die Liste nicht neu geladen werden.");
     }
 
     @Test
-    void getAlleFragen_sollListeMitMockDatenZurueckgeben() {
-        // alleFragen == null → initialisiereMockDaten wird aufgerufen
-        List<Frage> fragen = FragenRepository.getAlleFragen();
-        // Prüfen, dass die Liste nicht null ist
-        assertNotNull(fragen);
-        // Prüfen, dass initialisiereMockDaten etwas hinzugefügt hat
-        assertFalse(fragen.isEmpty());
+    void getUngeloesteFragen_FiltertNurUngelösteFragen() {
+        // Arrange
+        Frage f1 = new Frage(1, Themenbereich.SQL, Fragenkategorie.MULTIPLE_CHOICE, "x?", List.of(), 1);
+
+        Frage f2 = new Frage(2, Themenbereich.SQL, Fragenkategorie.MULTIPLE_CHOICE, "y?", List.of(), 1);
+        f2.setGeloest();
+
+        FragenRepository.alleFragen = List.of(f1, f2);
+
+        // Act
+        List<Frage> result = FragenRepository.getUngeloesteFragen(Themenbereich.SQL);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertTrue(result.contains(f1));
+        assertFalse(result.contains(f2));
     }
     @Test
-    void getUngeloesteFragen_sollNurUngelosteZurueckgeben() {
-        List<Frage> alleFragen = FragenRepository.getAlleFragen();
+    void berechneFortschrittFuerThema_BerechnetKorrekt() {
+        // Arrange
+        Frage f1 = new Frage(1, Themenbereich.SQL, Fragenkategorie.MULTIPLE_CHOICE, "A?", List.of(), 1);
+        Frage f2 = new Frage(2, Themenbereich.SQL, Fragenkategorie.MULTIPLE_CHOICE, "B?", List.of(), 1);
 
-        alleFragen.get(0).setGeloest();
-        alleFragen.get(1).setGeloest();
+        f1.setGeloest();
 
-        List<Frage> ungeloste = FragenRepository.getUngeloesteFragen(Themenbereich.SQL);
 
-        assertTrue(ungeloste.stream().noneMatch(Frage::isGeloest));
-        int expected = alleFragen.size() - 2;
-        assertEquals(expected, ungeloste.size());
-        assertTrue(ungeloste.stream().allMatch(f -> f.getThemenbereich() == Themenbereich.SQL));
-    }
-    @Test
-    void berechneFortschrittFuerThema_sollNullZurueckgebenWennKeineFragen() {
-        // Angenommen, wir nehmen ein Thema, das nicht existiert
-        double fortschritt = FragenRepository.berechneFortschrittFuerThema(Themenbereich.KEINTHEMA);
+        FragenRepository.alleFragen = List.of(f1, f2);
 
-        assertEquals(0.0, fortschritt);
-    }
-    @Test
-    void berechneFortschrittFuerThema_sollKorrekteQuoteZurueckgeben() {
-
-        List<Frage> fragen = FragenRepository.getAlleFragen();
-
-        // Markiere 3 Fragen als gelöst
-        fragen.get(0).setGeloest();
-        fragen.get(1).setGeloest();
-        fragen.get(2).setGeloest();
-
+        // Act
         double fortschritt = FragenRepository.berechneFortschrittFuerThema(Themenbereich.SQL);
 
-        int alle = (int) fragen.stream().filter(f -> f.getThemenbereich() == Themenbereich.SQL).count();
-
-        double expected = 3.0 / alle;
-        assertEquals(expected, fortschritt);
+        // Assert
+        assertEquals(0.5, fortschritt);
     }
     @Test
-    void berechneFortschrittFuerThema_soll1ZurueckgebenWennAlleGeloest() {
+    void mapKategorie_MappedKorrekt() throws Exception {
+        Method method = FragenRepository.class.getDeclaredMethod("mapKategorie", String.class);
+        method.setAccessible(true);
 
-        List<Frage> fragen = FragenRepository.getAlleFragen();
+        Fragenkategorie result = (Fragenkategorie) method.invoke(null, "MC");
 
-        // Alle Fragen des Themas SQL als gelöst markieren
-        fragen.stream()
-                .filter(f -> f.getThemenbereich() == Themenbereich.SQL)
-                .forEach(Frage::setGeloest);
+        assertEquals(Fragenkategorie.MULTIPLE_CHOICE, result);
+    }
+    @Test
+    void ladeAntwortenFuerFrage_LädtMultipleChoiceAntworten() throws Exception {
+        // Arrange
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
 
-        double fortschritt = FragenRepository.berechneFortschrittFuerThema(Themenbereich.SQL);
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
 
-        assertEquals(1.0, fortschritt);
+        when(rs.next()).thenReturn(true, false);
+        when(rs.getString("option_text")).thenReturn("Test Option");
+        when(rs.getBoolean("is_correct")).thenReturn(true);
+
+        Method m = FragenRepository.class.getDeclaredMethod(
+                "ladeAntwortenFuerFrage", int.class, String.class, Connection.class);
+        m.setAccessible(true);
+
+        // Act
+        List<Antwort> antworten = (List<Antwort>) m.invoke(null, 1, "MC", conn);
+
+        // Assert
+        assertEquals(1, antworten.size());
+        assertEquals("Test Option", antworten.get(0).getAntwort());
+        assertTrue(antworten.get(0).isRichtig());
     }
 
 }
