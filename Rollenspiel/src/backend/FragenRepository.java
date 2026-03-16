@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragenRepository {
-    /*
-    Diese Klasse enthält Mock-Fragen zum Testen bis die Datenbank eingebunden ist
-     */
 
     public static List<Frage> alleFragen = null;
 
