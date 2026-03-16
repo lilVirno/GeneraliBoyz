@@ -3,7 +3,7 @@ package enums;
 public enum Themenbereich {
     SQL("SQL"),
     UML("UML-Diagramme"),
-    DATENBANK("Datenbankmodellierung"),
+    DATENBANK("Datenbank - Modellierung"),
     PSEUDOCODE("Pseudocode"),
     RECHT("Recht"),
     WIRTSCHAFT("Wirtschaft"),
@@ -14,5 +14,9 @@ public enum Themenbereich {
 
     Themenbereich(String name) {
         this.name = name;
+    }
+
+    public String getName(){
+        return name;
     }
 }

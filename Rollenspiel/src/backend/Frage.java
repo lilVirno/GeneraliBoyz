@@ -6,19 +6,30 @@ import enums.Themenbereich;
 import java.util.List;
 
 public class Frage {
+    private int dbID;
     private Themenbereich themenbereich;
     private Fragenkategorie fragenkategorie;
     private String frage;
     private List<Antwort> antworten;
     private boolean geloest = false;
     private int punkte;
+    private List<GapField> gapFields;
 
-    public Frage(Themenbereich themenbereich, String frage, List<Antwort> antworten, int punkte) {
+
+
+    public Frage(int dbID, Themenbereich themenbereich, Fragenkategorie fragenkategorie, String frage, List<Antwort> antworten, int punkte) {
+        this.dbID = dbID;
         this.themenbereich = themenbereich;
+        this.fragenkategorie = fragenkategorie;
         this.frage = frage;
         this.antworten = antworten;
-        this.fragenkategorie = ermittleKategorie();
         this.punkte = punkte;
+    }
+
+
+
+    public int getDbID() {
+        return dbID;
     }
 
     public Themenbereich getThemenbereich() {
@@ -53,6 +64,14 @@ public class Frage {
         this.antworten = antworten;
     }
 
+    public List<GapField> gapFields() {
+        return gapFields;
+    }
+
+    public void setGapField(List<GapField> gapFields) {
+        this.gapFields = gapFields;
+    }
+
     public boolean isGeloest() {
         return geloest;
     }
@@ -69,25 +88,23 @@ public class Frage {
         this.punkte = punkte;
     }
 
-    private Fragenkategorie ermittleKategorie() {
-        return switch (antworten.size()) {
-            case 1 -> Fragenkategorie.LUECKENTEXT;
-            case 2 -> Fragenkategorie.WAHR_FALSCH;
-            case 4 -> Fragenkategorie.MULTIPLE_CHOICE;
-            default -> null;
-        };
-    }
-    // um die Methode ermittleKategorie testen zu können
-    public Fragenkategorie kategorie() {
-        return ermittleKategorie();
-    }
 
 
-    public String getKorrekteAntwort() {
+
+    public List<String> getKorrekteAntworten() {
         return antworten.stream()
                 .filter(Antwort::isRichtig)
                 .map(Antwort::getAntwort)
-                .findFirst()
-                .orElse("Keine korrekte backend.Antwort hinterlegt.");
+                .toList();
+    }
+
+    // Hilfsmethode: zähle Vorkommen eines Substrings
+    public static int countOccurrences(String text, String token) {
+        int count = 0, idx = 0;
+        while ((idx = text.indexOf(token, idx)) != -1) {
+            count++;
+            idx += token.length();
+        }
+        return count;
     }
 }
