@@ -66,9 +66,7 @@ public class MultipleChoiceGUI extends BorderPane {
             // fügen wir das Styling für die Box als "festen" Bestandteil hinzu:
             cb.setStyle(cb.getStyle() + "-fx-box-background: white; -fx-box-border: #cccccc;");
 
-            // Skalierung beibehalten
-            cb.setScaleX(1.2);
-            cb.setScaleY(1.2);
+
 
             // Hover-Effekt (sanftes Grau für den Hintergrund des ganzen Elements)
             cb.setOnMouseEntered(e -> cb.setStyle(cb.getStyle() + "-fx-background-color: #f9f9f9; -fx-background-radius: 8;"));
