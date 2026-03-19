@@ -39,7 +39,7 @@ public class LueckentextGUI extends BorderPane {
 
         // Kopf: Frage
         Label frageLabel = new Label(frage.getFrage());
-        frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        frageLabel.setStyle(UIStyles.FRAGE_LABEL);
         setTop(frageLabel);
         BorderPane.setAlignment(frageLabel, Pos.CENTER);
         BorderPane.setMargin(frageLabel, new Insets(20, 0, 20, 0));
@@ -88,15 +88,7 @@ public class LueckentextGUI extends BorderPane {
             TextField tf = new TextField();
             tf.setPromptText("Antwort " + (i + 1) + " eingeben...");
             // WICHTIG: neutrales Styling, damit es nicht wie Buttons aussieht
-            tf.setStyle(
-                    "-fx-font-size: 18px;" +
-                            "-fx-background-color: white;" +
-                            "-fx-background-radius: 6;" +
-                            "-fx-text-fill: -fx-text-base-color;" +
-                            "-fx-padding: 6 10 6 10;" +
-                            "-fx-border-color: -fx-box-border;" +
-                            "-fx-border-radius: 6;"
-            );
+            tf.setStyle(UIStyles.LÜCKENTEXT_FELD);
             tf.setPrefColumnCount(16);
             tf.setMaxWidth(300);
 
@@ -109,13 +101,7 @@ public class LueckentextGUI extends BorderPane {
         // Prüfen-Button
         Button pruefen = new Button("Prüfen");
         pruefen.setDefaultButton(true);
-        pruefen.setStyle(
-                "-fx-font-size: 18px;" +
-                        "-fx-background-color: #ffffff;" +
-                        "-fx-text-fill: black;" +
-                        "-fx-padding: 10px 28px;" +
-                        "-fx-background-radius: 10;"
-        );
+        pruefen.setStyle(UIStyles.ANTWORT_BUTTON);
 
         pruefen.setOnAction(e -> {
             boolean alleRichtig = true;

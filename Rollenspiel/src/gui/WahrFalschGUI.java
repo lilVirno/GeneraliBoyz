@@ -23,7 +23,7 @@ public class WahrFalschGUI extends BorderPane {
         this.aktuellerSpieler = spieler;
 
         Label frageLabel = new Label(frage.getFrage());
-        frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        frageLabel.setStyle(UIStyles.FRAGE_LABEL);
         setTop(frageLabel);
         BorderPane.setAlignment(frageLabel, Pos.CENTER);
         BorderPane.setMargin(frageLabel, new Insets(20, 0, 20, 0));
@@ -34,7 +34,7 @@ public class WahrFalschGUI extends BorderPane {
 
         for (Antwort antwort : frage.getAntworten()) {
             Button btn = new Button(antwort.getAntwort());
-            btn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
+            btn.setStyle(UIStyles.ANTWORT_BUTTON);
             btn.setOnAction(e -> pruefeAntwort(antwort));
             buttonBox.getChildren().add(btn);
             btn.setFocusTraversable(false);
