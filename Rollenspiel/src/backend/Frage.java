@@ -13,7 +13,6 @@ public class Frage {
     private List<Antwort> antworten;
     private boolean geloest = false;
     private int punkte;
-    private List<GapField> gapFields;
 
 
 
@@ -25,10 +24,11 @@ public class Frage {
         this.antworten = antworten;
         this.punkte = punkte;
     }
-
-    public Frage( ) {
+    public Frage(){
 
     }
+
+
 
     public Themenbereich getThemenbereich() {
         return themenbereich;
