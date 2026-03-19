@@ -180,9 +180,7 @@ public class Frage {
      *
      * @return die richtige Antwort, oder ein Hinweistext falls keine gefunden wurde
      */
-    public String getKorrekteAntwort() {
-
-
+//    public String getKorrekteAntwort() {}
 
     public List<String> getKorrekteAntworten() {
         return antworten.stream()
