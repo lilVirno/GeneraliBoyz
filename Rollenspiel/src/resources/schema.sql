@@ -168,3 +168,21 @@ INSERT INTO gap_field (question_id, gap_index, input_type, correct_text) VALUES
 (36, 1, 'FREE_TEXT', 'ORDER BY'),
 (37, 1, 'FREE_TEXT', 'GROUP BY'),
 (38, 1, 'FREE_TEXT', 'AVG');
+
+-- --- Tabellen für Spielstand-Speicherung ---
+
+CREATE TABLE IF NOT EXISTS player (
+  player_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  score INT DEFAULT 0,
+  rank_name VARCHAR(50) DEFAULT 'Anfänger'
+);
+
+CREATE TABLE IF NOT EXISTS player_progress (
+  player_id INT NOT NULL,
+  question_id INT NOT NULL,
+  solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (player_id, question_id),
+  CONSTRAINT fk_progress_player FOREIGN KEY (player_id) REFERENCES player(player_id) ON DELETE CASCADE,
+  CONSTRAINT fk_progress_question FOREIGN KEY (question_id) REFERENCES question(question_id) ON DELETE CASCADE
+);

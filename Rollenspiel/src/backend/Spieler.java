@@ -191,7 +191,10 @@ public class Spieler {
      * Berechnet den Gesamtfortschritt basierend auf Punkten.
      */
     public void setGesamtFortschritt() {
-        this.gesamtFortschritt = (double) getPunktekonto() / getMaxPunkte();
+        // Durchschnitt aller Themen
+        this.gesamtFortschritt = (fortschrittSQL + fortschrittUML + fortschrittDATENBANK +
+                fortschrittPSEUDOCODE + fortschrittRECHT +
+                fortschrittWIRTSCHAFT + fortschrittMASCHINELLES_LEARNING) / 7.0;
     }
 
     /** @return aktueller Punktestand */
@@ -276,19 +279,24 @@ public class Spieler {
      * Fügt Punkte für eine beantwortete Frage hinzu, aktualisiert Level,
      * Fortschritte und Medaillen.
      *
-     * @param frage beantwortete Frage
+     * @param geloesteFrage beantwortete Frage
      */
-    public void addPunkte(Frage frage) {
-        this.punktekonto += frage.getPunkte();
+    public void addPunkte(Frage geloesteFrage) {
+        if (geloesteFrage != null) {
+            this.punktekonto += geloesteFrage.getPunkte();
+        }
 
-        // Gesamtfortschritt und Level neu berechnen
+        // Fortschritte direkt aus der "Wahrheit" (Repository) ziehen
+        this.fortschrittSQL = FragenRepository.berechneFortschrittFuerThema(Themenbereich.SQL);
+        this.fortschrittUML = FragenRepository.berechneFortschrittFuerThema(Themenbereich.UML);
+        this.fortschrittDATENBANK = FragenRepository.berechneFortschrittFuerThema(Themenbereich.DATENBANK);
+        this.fortschrittPSEUDOCODE = FragenRepository.berechneFortschrittFuerThema(Themenbereich.PSEUDOCODE);
+        this.fortschrittRECHT = FragenRepository.berechneFortschrittFuerThema(Themenbereich.RECHT);
+        this.fortschrittWIRTSCHAFT = FragenRepository.berechneFortschrittFuerThema(Themenbereich.WIRTSCHAFT);
+        this.fortschrittMASCHINELLES_LEARNING = FragenRepository.berechneFortschrittFuerThema(Themenbereich.MASCHINELLESLEARNING);
+
         setGesamtFortschritt();
         setLevel();
-
-        // Themen-spezifischen Fortschritt berechnen
-        aktualisiereThemenFortschritt(frage.getThemenbereich());
-
-        // Prüfen, ob neue Medaillen dazugekommen sind
         setMedallienArray();
     }
 

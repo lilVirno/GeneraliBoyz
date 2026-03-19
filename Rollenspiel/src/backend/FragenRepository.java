@@ -28,10 +28,13 @@ public class FragenRepository {
      *
      * @return Liste aller Fragen
      */
+    // Im FragenRepository.java anpassen:
     public static List<Frage> getAlleFragen() {
         if (alleFragen == null) {
+            // Falls jemand vergisst, einen Spieler zu laden, initialisieren wir
+            // die Liste leer oder werfen eine Info aus.
             alleFragen = new ArrayList<>();
-            initialisiereFragen(alleFragen);
+            System.err.println("Warnung: Fragen wurden ohne Spieler-Kontext angefordert.");
         }
         return alleFragen;
     }
@@ -71,18 +74,58 @@ public class FragenRepository {
      *
      * @param fragen Liste, die befüllt werden soll
      */
-    private static void initialisiereFragen(List<Frage> fragen) {
-        String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name " +
+//    private static void initialisiereFragen(List<Frage> fragen) {
+//        String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name " +
+//                "FROM question q " +
+//                "JOIN Question_Theme qt ON q.question_id = qt.question_id " +
+//                "JOIN theme t ON qt.theme_id = t.theme_id " +
+//                "ORDER BY RAND()";
+//
+//        try (Connection connection = DatabaseController.getConnection();
+//             Statement statement = connection.createStatement();
+//             ResultSet resultSet = statement.executeQuery(sql)) {
+//
+//            while (resultSet.next()) {
+//                int questionId = resultSet.getInt("question_id");
+//                String typeString = resultSet.getString("question_type");
+//                String startText = resultSet.getString("start_text");
+//                int punkte = resultSet.getInt("points");
+//                String themaString = resultSet.getString("thema_name");
+//
+//                Themenbereich themenbereich = Themenbereich.valueOf(themaString);
+//
+//                Fragenkategorie fragenkategorie = mapKategorie(typeString);
+//
+//                List<Antwort> antworten = ladeAntwortenFuerFrage(questionId, typeString, connection);
+//
+//                Frage neueFrage = new Frage(questionId, themenbereich, fragenkategorie, startText, antworten, punkte);
+//
+//                fragen.add(neueFrage);
+//            }
+//        } catch (Exception e) {
+//            System.err.println("Fehler beim Initialisieren der Datenbank-Fragen: " + e.getMessage());
+//        }
+//    }
+
+    private static void initialisiereFragen(List<Frage> fragen, String spielerName) {
+        // Wir nutzen einen LEFT JOIN auf player_progress für den spezifischen Spieler
+        String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name, " +
+                "pp.question_id IS NOT NULL AS bereits_geloest " +
                 "FROM question q " +
                 "JOIN Question_Theme qt ON q.question_id = qt.question_id " +
                 "JOIN theme t ON qt.theme_id = t.theme_id " +
+                "LEFT JOIN player_progress pp ON q.question_id = pp.question_id " +
+                "AND pp.player_id = (SELECT player_id FROM player WHERE name = ?) " +
                 "ORDER BY RAND()";
 
         try (Connection connection = DatabaseController.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, spielerName);
+            ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
+
                 int questionId = resultSet.getInt("question_id");
                 String typeString = resultSet.getString("question_type");
                 String startText = resultSet.getString("start_text");
@@ -95,13 +138,26 @@ public class FragenRepository {
 
                 List<Antwort> antworten = ladeAntwortenFuerFrage(questionId, typeString, connection);
 
+                // ... (dein restlicher Code zum Auslesen)
+                boolean geloest = resultSet.getBoolean("bereits_geloest");
+
                 Frage neueFrage = new Frage(questionId, themenbereich, fragenkategorie, startText, antworten, punkte);
+
+                // WICHTIG: Setze den Status der Frage basierend auf der DB
+                if (geloest) {
+                    neueFrage.setGeloest();
+                }
 
                 fragen.add(neueFrage);
             }
         } catch (Exception e) {
-            System.err.println("Fehler beim Initialisieren der Datenbank-Fragen: " + e.getMessage());
+            System.err.println("Fehler beim Initialisieren: " + e.getMessage());
         }
+    }
+
+    public static void ladeFragenFuerSpieler(String name) {
+        alleFragen = new ArrayList<>();
+        initialisiereFragen(alleFragen, name);
     }
 
     /**

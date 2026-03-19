@@ -20,6 +20,8 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
+import static backend.DatabaseController.speichereSpielstand;
+
 /**
  * Hauptklasse der JavaFX-Anwendung. Verantwortlich für:
  * <ul>
@@ -109,7 +111,8 @@ public class Startbildschirm extends Application {
 
         // Startbildschirm erstellen
         StackPane startRoot = createStartRoot(bgImage);
-        showNameInputOverlay(startRoot);
+        showEntryChoice(startRoot);
+//        showNameInputOverlay(startRoot);
 
         startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
@@ -125,6 +128,109 @@ public class Startbildschirm extends Application {
         stage.show();
 
         runSplashSequence(stage, splashScene, startScene);
+
+        stage.setOnCloseRequest(event -> {
+            event.consume();
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Spiel beenden");
+            alert.setHeaderText("Möchtest du deinen Spielstand speichern?");
+            alert.getButtonTypes().setAll(
+                    new ButtonType("Speichern & Beenden"),
+                    new ButtonType("Ohne Speichern beenden"),
+                    new ButtonType("Abbrechen", ButtonBar.ButtonData.CANCEL_CLOSE)
+            );
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response.getText().equals("Speichern & Beenden")) {
+                    // Nur speichern, wenn ein Spieler angemeldet ist
+                    if (aktuellerSpieler != null && !aktuellerSpieler.getName().isEmpty()) {
+                        List<Integer> geloesteIds = FragenRepository.getAlleFragen().stream()
+                                .filter(Frage::isGeloest)
+                                .map(Frage::getDbID)
+                                .toList();
+
+                        DatabaseController.speichereSpielstand(aktuellerSpieler, geloesteIds);
+                    }
+                    stage.close();
+                } else if (response.getText().equals("Ohne Speichern beenden")) {
+                    stage.close();
+                }
+            });
+        });
+    }
+
+
+    private void showEntryChoice(StackPane root) {
+        VBox box = new VBox(20);
+        box.setAlignment(Pos.CENTER);
+        box.setStyle(UIStyles.POPUP_CONTAINER);
+        box.setMaxSize(350, 250);
+
+        Label info = new Label("Willkommen!");
+        info.setStyle(UIStyles.FRAGE);
+
+        Button btnNew = new Button("Neues Spiel");
+        btnNew.setStyle(UIStyles.BUTTON_MAIN);
+        btnNew.setOnAction(e -> {
+            root.getChildren().remove(box);
+            showNameInputOverlay(root); // Dein alter Dialog
+        });
+
+        Button btnLoad = new Button("Spiel laden");
+        btnLoad.setStyle(UIStyles.BUTTON_MAIN);
+        btnLoad.setOnAction(e -> {
+            showLoadGameOverlay(root);
+        });
+
+        box.getChildren().addAll(info, btnNew, btnLoad);
+        root.getChildren().add(box);
+    }
+
+    private void showLoadGameOverlay(StackPane root) {
+        VBox container = new VBox(20);
+        container.setAlignment(Pos.CENTER);
+        container.setStyle(UIStyles.POPUP_CONTAINER);
+        container.setMaxSize(400, 300);
+        container.setPadding(new Insets(30));
+
+        Label titel = new Label("Spielstand laden");
+        titel.setStyle(UIStyles.FRAGE);
+
+        // Dropdown-Menü mit existierenden Spielern
+        ComboBox<String> spielerWahl = new ComboBox<>();
+        spielerWahl.getItems().addAll(DatabaseController.getAlleSpielerNamen());
+        spielerWahl.setPromptText("Wähle deinen Namen...");
+        spielerWahl.setStyle("-fx-font-size: 16px; -fx-pref-width: 250px;");
+
+        Button confirmBtn = new Button("Laden & Starten");
+        confirmBtn.setStyle(UIStyles.BUTTON_MAIN);
+
+        Button backBtn = new Button("Abbrechen");
+        backBtn.setStyle(UIStyles.NAV_BUTTON);
+
+        container.getChildren().addAll(titel, spielerWahl, confirmBtn, backBtn);
+        root.getChildren().add(container);
+
+        // Logik: Laden
+        confirmBtn.setOnAction(e -> {
+            String gewaehlterName = spielerWahl.getValue();
+            if (gewaehlterName != null) {
+                // 1. Wichtig: Zuerst die Fragen laden, damit der Spieler beim Berechnen Daten hat!
+                FragenRepository.ladeFragenFuerSpieler(gewaehlterName);
+
+                // 2. Jetzt den Spieler laden (der nutzt nun die geladenen Fragen für seine %-Werte)
+                this.aktuellerSpieler = DatabaseController.ladeSpieler(gewaehlterName);
+
+                if (this.aktuellerSpieler != null) {
+                    profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
+                    root.getChildren().remove(container);
+                    stage.setScene(themenScene);
+                }
+            }
+        });
+
+        backBtn.setOnAction(e -> root.getChildren().remove(container));
     }
 
     /**
@@ -166,7 +272,9 @@ public class Startbildschirm extends Application {
             if (!name.isEmpty()) {
                 aktuellerSpieler.setName(name);
 
-                // Profilseite erst jetzt mit dem richtigen Namen bauen
+                // Initialisiere leere Fragenliste für den neuen Namen
+                FragenRepository.ladeFragenFuerSpieler(name);
+
                 profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
 
                 // Animation: Overlay ausfaden
@@ -660,48 +768,6 @@ public class Startbildschirm extends Application {
                 + "-fx-background-radius: 10;";
     }
 
-//    private Button createThemeButton(String text) {
-//        Button btn = new Button(text);
-//        btn.setStyle(
-//                "-fx-font-size: 18px;"
-//                        + "-fx-background-color: rgba(255,255,255,0.90);"
-//                        + "-fx-text-fill: #1f2937;"
-//                        + "-fx-padding: 10px 20px;"
-//                        + "-fx-background-radius: 10;"
-//                        + "-fx-border-radius: 10;"
-//                        + "-fx-border-color: rgba(255,255,255,0.35);"
-//                        + "-fx-border-width: 2;"
-//        );
-//
-//        btn.setOnMouseEntered(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.98);"
-//                                + "-fx-text-fill: #111827;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.6);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//
-//        btn.setOnMouseExited(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.90);"
-//                                + "-fx-text-fill: #1f2937;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.35);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//        btn.setFocusTraversable(false);
-//
-//        return btn;
-//    }
 
     public static void main(String[] args) {
         DatabaseController.setupDatabase();
