@@ -315,7 +315,7 @@ public class Startbildschirm extends Application {
 
 
     // ---------- Logik aus Swing: Fragen laden ----------
-    public void ladeFragenUndOeffne(Themenbereich thema) {
+    private void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
@@ -328,11 +328,11 @@ public class Startbildschirm extends Application {
         }
 
         this.fragenController = new FragenController(fragen);
-        öffneFrageGUI(fragenController.getAktuelleFrage());
+        oeffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
-    private void öffneFrageGUI(Frage frage) {
+    private void oeffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
         frageRoot.setAlignment(Pos.TOP_CENTER); // Von Center auf TOP_CENTER ändern
         frageRoot.setPadding(new Insets(10, 0, 40, 0));
@@ -373,7 +373,7 @@ public class Startbildschirm extends Application {
     public void oeffneNaechsteFrageOderBeenden() {
         if (fragenController.hatNaechsteFrage()) {
             fragenController.naechsteFrage();
-            öffneFrageGUI(fragenController.getAktuelleFrage());
+            oeffneFrageGUI(fragenController.getAktuelleFrage());
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
