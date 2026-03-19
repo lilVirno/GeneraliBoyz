@@ -9,12 +9,36 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
+/**
+ * GUI-Komponente für die Darstellung und Bearbeitung einer Lückentextfrage.
+ * Diese Ansicht zeigt eine Frage, ein Eingabefeld sowie einen Prüfbutton
+ * und wertet die Antwort des Spielers aus. Bei korrekter Lösung werden
+ * Punkte vergeben und der Spielerfortschritt aktualisiert.
+ */
 public class LueckentextGUI extends BorderPane {
 
+    /**
+     * Referenz auf den Startbildschirm, um zur nächsten Frage navigieren zu können.
+     */
     private final Startbildschirm main;
+
+    /**
+     * Die aktuell angezeigte Frage.
+     */
     private final Frage aktuelleFrage;
+
+    /**
+     * Spieler, der diese Frage beantwortet.
+     */
     private final Spieler aktuellerSpieler;
 
+    /**
+     * Erstellt eine GUI für eine Lückentextfrage.
+     *
+     * @param frage   die anzuzeigende Frage
+     * @param main    Referenz auf den Startbildschirm für Navigation
+     * @param spieler der aktuell spielende Spieler
+     */
     public LueckentextGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
@@ -36,10 +60,16 @@ public class LueckentextGUI extends BorderPane {
         Button pruefen = new Button("Prüfen");
         pruefen.setDefaultButton(true);
         pruefen.setStyle("-fx-font-size: 20px;"
-                        + "-fx-background-color: #Ffffff;"
-                        + "-fx-text-fill: black;"
-                        + "-fx-padding: 10px 44px;"
-                        + "-fx-background-radius: 10;");
+                + "-fx-background-color: #Ffffff;"
+                + "-fx-text-fill: black;"
+                + "-fx-padding: 10px 44px;"
+                + "-fx-background-radius: 10;");
+
+        /**
+         * Eventhandler für den Prüfbutton.
+         * Vergleicht die Benutzereingabe mit der korrekten Antwort,
+         * zeigt ein Info-Popup und aktualisiert ggf. den Fortschritt des Spielers.
+         */
         pruefen.setOnAction(e -> {
             String korrekt = frage.getKorrekteAntwort();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -63,9 +93,9 @@ public class LueckentextGUI extends BorderPane {
             });
             delay.play();
 
-            // Weiterleitung bei manuellen Schließen des Pop-ups
+            // Weiterleitung bei manuellem Schließen des Pop-ups
             alert.setOnHidden(event -> {
-                // verhinert doppeltes Auführen
+                // verhindert doppeltes Ausführen
                 delay.stop();
                 this.main.oeffneNaechsteFrageOderBeenden();
             });

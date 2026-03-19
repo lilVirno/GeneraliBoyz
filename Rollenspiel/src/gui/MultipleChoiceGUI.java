@@ -15,13 +15,40 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GUI-Klasse zur Darstellung und Bearbeitung von Multiple-Choice-Fragen.
+ * Sie zeigt die Frage, die verfügbaren Antwortoptionen als CheckBoxen,
+ * prüft die Antwortkombination und aktualisiert den Spielerfortschritt.
+ */
 public class MultipleChoiceGUI extends BorderPane {
 
+    /**
+     * Referenz auf den Startbildschirm zur Navigation zur nächsten Frage.
+     */
     private final Startbildschirm main;
+
+    /**
+     * Liste der CheckBoxen, die die Antwortoptionen repräsentieren.
+     */
     private final List<CheckBox> checkBoxes = new ArrayList<>();
+
+    /**
+     * Die aktuelle Multiple-Choice-Frage.
+     */
     private final Frage aktuelleFrage;
+
+    /**
+     * Der Spieler, der diese Frage beantwortet.
+     */
     private final Spieler aktuellerSpieler;
 
+    /**
+     * Konstruktor für das Multiple-Choice-GUI.
+     *
+     * @param frage   die anzuzeigende Frage
+     * @param main    die Hauptoberfläche zur Navigation
+     * @param spieler der aktuelle Spieler
+     */
     public MultipleChoiceGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
@@ -41,14 +68,16 @@ public class MultipleChoiceGUI extends BorderPane {
         antwortBox.setAlignment(Pos.CENTER_LEFT);
         antwortBox.setPadding(new Insets(20, 50, 20, 50));
 
-
-        // Checkboxen für jede Antwort erstellen
+        /**
+         * Erstellen der CheckBoxen für jede Antwortoption.
+         * Jede CheckBox hält im UserData-Feld das zugehörige Antwort-Objekt.
+         */
         for (Antwort antwort : frage.getAntworten()) {
             CheckBox cb = new CheckBox(antwort.getAntwort());
             cb.setFocusTraversable(false);
             cb.setUserData(antwort);
 
-            // 1. Basis-Styling für Text und Abstände
+            // Basistyle
             String baseStyle = "-fx-font-size: 24px; "
                     + "-fx-text-fill: #333333; "
                     + "-fx-padding: 10px; "
@@ -56,21 +85,22 @@ public class MultipleChoiceGUI extends BorderPane {
 
             cb.setStyle(baseStyle);
 
-            // 2. Styling für das Quadrat (die "Box") selbst:
-            // Wir nutzen Lookups erst nach dem Rendern oder setzen ein allgemeines Stylesheet.
-            // Da wir hier im Loop sind, ist die sauberste Methode für "abgerundet & weiß"
-            // das Anwenden auf die Sub-Struktur via CSS-String:
-            cb.lookupAll(".box").forEach(node -> node.setStyle("-fx-background-radius: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5;"));
+            // Lookups für das CheckBox-Quadrat (ggf. erst sichtbar nach Rendering)
+            cb.lookupAll(".box").forEach(node -> node.setStyle(
+                    "-fx-background-radius: 5; "
+                            + "-fx-background-color: white; "
+                            + "-fx-border-color: #cccccc; "
+                            + "-fx-border-radius: 5;"
+            ));
 
-            // Falls das lookup oben noch nichts findet (weil noch nicht angezeigt),
-            // fügen wir das Styling für die Box als "festen" Bestandteil hinzu:
+            // Backup-Styling falls Lookup noch nichts setzt
             cb.setStyle(cb.getStyle() + "-fx-box-background: white; -fx-box-border: #cccccc;");
 
-            // Skalierung beibehalten
+            // Leichtes Skalieren für bessere Sichtbarkeit
             cb.setScaleX(1.2);
             cb.setScaleY(1.2);
 
-            // Hover-Effekt (sanftes Grau für den Hintergrund des ganzen Elements)
+            // Hover-Effekt
             cb.setOnMouseEntered(e -> cb.setStyle(cb.getStyle() + "-fx-background-color: #f9f9f9; -fx-background-radius: 8;"));
             cb.setOnMouseExited(e -> cb.setStyle(cb.getStyle().replace("-fx-background-color: #f9f9f9; -fx-background-radius: 8;", "")));
 
@@ -78,11 +108,10 @@ public class MultipleChoiceGUI extends BorderPane {
             antwortBox.getChildren().add(cb);
         }
 
-// Abstand zwischen den Checkboxen in der VBox (antwortBox) einstellen
         antwortBox.setSpacing(15);
         setCenter(antwortBox);
 
-        // Bestätigen Button unten
+        // Button zum Prüfen der Antwort
         Button submitBtn = new Button("Prüfen");
         submitBtn.setDefaultButton(true);
         submitBtn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
@@ -94,6 +123,10 @@ public class MultipleChoiceGUI extends BorderPane {
         setBottom(bottomBox);
     }
 
+    /**
+     * Prüft, ob die vom Spieler ausgewählten Checkboxen der korrekten
+     * Kombination der Frage entsprechen.
+     */
     private void pruefeAntwort() {
         boolean allesRichtig = true;
 
@@ -109,6 +142,12 @@ public class MultipleChoiceGUI extends BorderPane {
         zeigeErgebnis(allesRichtig);
     }
 
+    /**
+     * Zeigt eine Rückmeldung (Popup) für richtig oder falsch an,
+     * vergibt bei Erfolg Punkte und navigiert nach kurzer Wartezeit weiter.
+     *
+     * @param erfolg true, wenn alle korrekten Antworten gewählt wurden
+     */
     private void zeigeErgebnis(boolean erfolg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
@@ -121,7 +160,7 @@ public class MultipleChoiceGUI extends BorderPane {
             alert.setContentText("Falsch! Die Komination der Antworten stimmt nicht.");
         }
 
-        // Timer zum automatischen Schließen des Pop-ups und Weiterleitung
+        // Timer zum automatischen Schließen des Popups
         PauseTransition delay = new PauseTransition(Duration.seconds(3));
 
         delay.setOnFinished(event -> {
@@ -130,9 +169,8 @@ public class MultipleChoiceGUI extends BorderPane {
             }
         });
 
-        // Weiterleitung bei manuellen Schließen des Pop-ups
+        // Weiterleitung nach Schließen des Popups
         alert.setOnHidden(event -> {
-            // verhinert doppeltes Auführen
             delay.stop();
             this.main.oeffneNaechsteFrageOderBeenden();
         });
