@@ -20,25 +20,78 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Hauptklasse der JavaFX-Anwendung. Verantwortlich für:
+ * <ul>
+ *   <li>Startbildschirm mit Splash-Screen</li>
+ *   <li>Nameingabe beim ersten Start</li>
+ *   <li>Navigation zu Themenauswahl und Profil</li>
+ *   <li>Erstellen und Initialisieren des Spielers</li>
+ * </ul>
+ */
 public class Startbildschirm extends Application {
 
+    /**
+     * Controller, der Fragen verwaltet.
+     */
     private FragenController fragenController;
+
+    /**
+     * Hauptfenster der Anwendung.
+     */
     private Stage stage;
+
+    /**
+     * Absoluter Pfad zum Hintergrundbild.
+     */
     private static final String ABSOLUTE_PATH =
             "Rollenspiel/src/resources/Designer.png";
 
+    /**
+     * Breite des Fensters.
+     */
     private static final int WIDTH = 1000;
+
+    /**
+     * Höhe des Fensters.
+     */
     private static final int HEIGHT = 600;
+
+    /**
+     * Dauer des Splash Screens in Sekunden.
+     */
     private static final double SPLASH_SECONDS = 2.5;
 
+    /**
+     * Primärfarbe für GUI-Elemente.
+     */
 //    private static final String SOLID_BG_HEX = "#2EA3A3";
 
+    /**
+     * Startszene.
+     */
     private Scene startScene;
+
+    /**
+     * Themenszene.
+     */
     private Scene themenScene;
+
+    /**
+     * Profilseite (wird nach Eingabe des Namens erzeugt).
+     */
     private Scene profilScene;
 
+    /**
+     * Aktuell eingeloggter Spieler.
+     */
     private Spieler aktuellerSpieler;
 
+    /**
+     * Einstiegspunkt der JavaFX-Anwendung.
+     *
+     * @param stage Hauptfenster
+     */
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -54,9 +107,9 @@ public class Startbildschirm extends Application {
         StackPane splashRoot = createSplashRoot(bgImage);
         Scene splashScene = new Scene(splashRoot, WIDTH, HEIGHT, Color.BLACK);
 
-        // Hier liegt die Magie: Wir fügen das Namens-Feld in das Start-Root ein
+        // Startbildschirm erstellen
         StackPane startRoot = createStartRoot(bgImage);
-        showNameInputOverlay(startRoot); // Das PopUp wird hier drübergelegt
+        showNameInputOverlay(startRoot);
 
         startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
@@ -74,9 +127,11 @@ public class Startbildschirm extends Application {
         runSplashSequence(stage, splashScene, startScene);
     }
 
-    public FragenController getFragenController() {
-        return fragenController;
-    }
+    /**
+     * Zeigt ein Overlay zur Nameingabe, bevor das Spiel startet.
+     *
+     * @param root Startbildschirm-Root
+     */
 
     private void showNameInputOverlay(StackPane root) {
         // Dunkler Hintergrund für den Fokus
@@ -127,7 +182,12 @@ public class Startbildschirm extends Application {
         });
     }
 
-    // ---------- Splash ----------
+    /**
+     * Erstellt das Root für den Splash Screen.
+     *
+     * @param bgImage Hintergrundbild
+     * @return fertiger Splash-Root
+     */
     private StackPane createSplashRoot(Image bgImage) {
         ImageView bg = new ImageView(bgImage);
         bg.setPreserveRatio(true);
@@ -142,7 +202,12 @@ public class Startbildschirm extends Application {
         return root;
     }
 
-    // ---------- Startscreen ----------
+    /**
+     * Erstellt den Startbildschirm mit Titel und Start-Button.
+     *
+     * @param bgImage Hintergrundbild
+     * @return fertiges Startscreen-Root
+     */
     private StackPane createStartRoot(Image bgImage) {
         ImageView bg = new ImageView(bgImage);
         bg.setPreserveRatio(true);
@@ -193,7 +258,14 @@ public class Startbildschirm extends Application {
         return root;
     }
 
-    // ---------- Splash Ablauf ----------
+    /**
+     * Steuert den Ablauf der Splash-Animation:
+     * kurze Pause → Fade-Out → Wechsel → Fade-In.
+     *
+     * @param stage       Hauptfenster
+     * @param splashScene Splashszene
+     * @param nextScene   Szene nach dem Splash
+     */
     private void runSplashSequence(Stage stage, Scene splashScene, Scene nextScene) {
         PauseTransition pause = new PauseTransition(Duration.seconds(SPLASH_SECONDS));
         FadeTransition fadeOut = new FadeTransition(Duration.millis(600), splashScene.getRoot());
@@ -212,6 +284,18 @@ public class Startbildschirm extends Application {
     }
 
     // ---------- Themenbereiche ----------
+    /**
+     * Erzeugt die komplette Themenauswahl-Seite.
+     * Diese Seite enthält:
+     * <ul>
+     *   <li>Header mit Home- und Profil-Button</li>
+     *   <li>Titelbereich</li>
+     *   <li>FlowPane mit modernen Themen-Kacheln</li>
+     *   <li>ScrollPane für kleinere Bildschirme</li>
+     * </ul>
+     *
+     * @return ein VBox-Root-Container für die Themenübersicht
+     */
     private VBox createThemenRoot() {
         var root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -225,20 +309,25 @@ public class Startbildschirm extends Application {
         var header = new AnchorPane();
         header.setPadding(new Insets(20, 30, 10, 30));
 
-        // Home Button (Links oben)
+        /**
+         * Home-Button (links oben), navigiert zurück zum Startbildschirm.
+         */
         Button homeBtn = new Button("🏠 Home");
         homeBtn.setFocusTraversable(false);
         homeBtn.setStyle(UIStyles.NAV_BUTTON);
         AnchorPane.setLeftAnchor(homeBtn, 10.0);
         AnchorPane.setTopAnchor(homeBtn, 0.0);
 
+        /**
+         * Profil-Button (rechts oben), navigiert zur Profilseite.
+         */
         Button profilBtn = new Button("👤 Profil");
         profilBtn.setFocusTraversable(false);
         profilBtn.setStyle(UIStyles.NAV_BUTTON);
         AnchorPane.setRightAnchor(profilBtn, 10.0);
         AnchorPane.setTopAnchor(profilBtn, 0.0);
 
-        // Navigation Logik (Unnamed Variable '_' für ActionEvent)
+        // Navigation Logik
         homeBtn.setOnAction(_ -> {
             var ft = new FadeTransition(Duration.millis(300), root);
             ft.setFromValue(1.0);
@@ -269,20 +358,20 @@ public class Startbildschirm extends Application {
         subLabel.setStyle(UIStyles.LABEL_SUBTITLE);
         titleBox.getChildren().addAll(auswahlLabel, subLabel);
 
-        // --- Themen-Grid (Die Kacheln) ---
+        // --- Themen-Grid (FlowPane mit Kacheln) ---
         var flowPane = new FlowPane();
         flowPane.setAlignment(Pos.CENTER);
         flowPane.setHgap(25);
         flowPane.setVgap(25);
         flowPane.setPadding(new Insets(20, 40, 20, 40));
 
-        // Iteriere über die Enum-Werte für die Kacheln
+        // Kacheln für alle Themenbereiche erzeugen
         for (var tb : Themenbereich.values()) {
             var btn = createThemeTile(tb);
             flowPane.getChildren().add(btn);
         }
 
-        // ScrollPane, falls die Liste bei kleineren Bildschirmen zu lang wird
+        // ScrollPane, um auch auf kleinen Displays alle Kacheln sehen zu können
         var scrollPane = new ScrollPane(flowPane);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -293,6 +382,14 @@ public class Startbildschirm extends Application {
         return root;
     }
 
+    /**
+     * Erstellt eine einzelne Themen-Kachel als modernen Button
+     * mit Glassmorphism-Optik und Hover-Effekten.
+     * Beim Anklicken wird der entsprechende Themenbereich geladen.
+     *
+     * @param tb Themenbereich (Enum)
+     * @return fertiger Themen-Button
+     */
     private Button createThemeTile(Themenbereich tb) {
         var btn = new Button(tb.getName());
         btn.setPrefSize(200, 140);
@@ -307,14 +404,21 @@ public class Startbildschirm extends Application {
         btn.setOnMouseEntered(_ -> btn.setStyle(UIStyles.KACHELN_HOVER));
         btn.setOnMouseExited(_ -> btn.setStyle(UIStyles.KACHELN));
 
+        // Öffnet Fragen für das Thema
         btn.setOnAction(_ -> ladeFragenUndOeffne(tb));
 
         return btn;
     }
 
+// ---------- Logik aus Swing: Fragen laden ----------
 
-
-    // ---------- Logik aus Swing: Fragen laden ----------
+    /**
+     * Lädt alle ungelösten Fragen zu einem bestimmten Themenbereich.
+     * Falls keine Fragen übrig sind, wird eine Information angezeigt.
+     * Sonst wird ein FragenController erstellt und die erste Frage geöffnet.
+     *
+     * @param thema Themenbereich, dessen Fragen geladen werden sollen
+     */
     private void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
@@ -331,10 +435,23 @@ public class Startbildschirm extends Application {
         oeffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
-    // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
+
+// ---------- Frage-GUI öffnen (JavaFX-Version) ----------
+
+    /**
+     * Öffnet die GUI für die jeweilige Frage abhängig von ihrer Kategorie.
+     * Unterstützte Kategorie-Views:
+     * <ul>
+     *   <li>Multiple Choice</li>
+     *   <li>Wahr/Falsch</li>
+     *   <li>Lückentext</li>
+     * </ul>
+     *
+     * @param frage Die Frage, deren GUI geöffnet werden soll
+     */
     private void oeffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
-        frageRoot.setAlignment(Pos.TOP_CENTER); // Von Center auf TOP_CENTER ändern
+        frageRoot.setAlignment(Pos.TOP_CENTER);
         frageRoot.setPadding(new Insets(10, 0, 40, 0));
         frageRoot.setBackground(new Background(new BackgroundFill(Color.web(UIStyles.MAIN_COLOR), CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -351,7 +468,7 @@ public class Startbildschirm extends Application {
         AnchorPane.setTopAnchor(cancelBtn, 0.0);
         header.getChildren().add(cancelBtn);
 
-        // Frage-Inhalt (muss jetzt in eine eigene Box, damit er zentriert bleibt)
+        // Inhalt des Fragepanels
         VBox content = new VBox(20);
         content.setAlignment(Pos.CENTER);
         VBox.setVgrow(content, Priority.ALWAYS);
@@ -370,6 +487,11 @@ public class Startbildschirm extends Application {
         stage.setScene(new Scene(frageRoot, WIDTH, HEIGHT));
     }
 
+    /**
+     * Öffnet die nächste Frage, falls vorhanden.
+     * Falls alle Fragen beantwortet wurden, erscheint eine Meldung und der Nutzer
+     * wird zurück zur Themenübersicht geleitet.
+     */
     public void oeffneNaechsteFrageOderBeenden() {
         if (fragenController.hatNaechsteFrage()) {
             fragenController.naechsteFrage();
@@ -385,6 +507,19 @@ public class Startbildschirm extends Application {
         }
     }
 
+
+    /**
+     * Erstellt das Profilfenster des Spielers inkl.:
+     * <ul>
+     *   <li>Name</li>
+     *   <li>Rang & Punktestand</li>
+     *   <li>Fortschritt in allen Themen</li>
+     *   <li>Gesamtfortschritt</li>
+     *   <li>Medaillen</li>
+     * </ul>
+     *
+     * @return Layout für die Profilseite
+     */
     private VBox createProfilRoot() {
         VBox root = new VBox(15);
         root.setAlignment(Pos.TOP_CENTER);
@@ -393,7 +528,7 @@ public class Startbildschirm extends Application {
                 Color.web(UIStyles.MAIN_COLOR), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
-        // --- Header ---
+        // Header
         AnchorPane header = new AnchorPane();
         header.setPadding(new Insets(10, 20, 0, 20));
 
@@ -406,11 +541,11 @@ public class Startbildschirm extends Application {
         AnchorPane.setTopAnchor(backBtn, 0.0);
         header.getChildren().add(backBtn);
 
-        // --- Titel ---
+        // Titel
         Label titel = new Label("Hallo, " + aktuellerSpieler.getName());
         titel.setStyle(UIStyles.PROFIL_TITEL);
 
-        // --- Allgemeine Stats (Level & Punkte) ---
+        // Stats (Level + Punkte)
         HBox generalStats = new HBox(40);
         generalStats.setAlignment(Pos.CENTER);
         generalStats.setStyle(UIStyles.PROFIL_STATS);
@@ -422,7 +557,7 @@ public class Startbildschirm extends Application {
 
         generalStats.getChildren().addAll(levelLabel, punkteLabel);
 
-        // --- Themen-Fortschritte (Grid) ---
+        // Fortschritte (Grid)
         GridPane progressGrid = new GridPane();
         progressGrid.setHgap(15);
         progressGrid.setVgap(8);
@@ -431,7 +566,6 @@ public class Startbildschirm extends Application {
         progressGrid.setPadding(new Insets(10));
         progressGrid.setStyle(UIStyles.PROFIL_BALKEN);
 
-        // Wir erstellen eine kleine Hilfsfunktion oder schleifen durch die 5 Bereiche
         addProgressRow(progressGrid, "SQL", aktuellerSpieler.getFortschrittSQL(), 0);
         addProgressRow(progressGrid, "UML", aktuellerSpieler.getFortschrittUML(), 1);
         addProgressRow(progressGrid, "DATENBANK", aktuellerSpieler.getFortschrittDATENBANK(), 2);
@@ -440,7 +574,7 @@ public class Startbildschirm extends Application {
         addProgressRow(progressGrid, "WIRTSCHAFT", aktuellerSpieler.getFortschrittWIRTSCHAFT(), 5);
         addProgressRow(progressGrid, "MASCHINELLES LERNEN", aktuellerSpieler.getFortschrittMASCHINELLES_LEARNING(), 6);
 
-        // --- Gesamtfortschritt ---
+        // Gesamtfortschritt
         VBox gesamtBox = new VBox(5);
         gesamtBox.setAlignment(Pos.CENTER);
         Label gesamtLabel = new Label("Gesamtfortschritt");
@@ -450,30 +584,25 @@ public class Startbildschirm extends Application {
         gesamtBar.setStyle("-fx-accent: #27ae60;"); // Ein schönes Grün
         gesamtBox.getChildren().addAll(gesamtLabel, gesamtBar);
 
-        // --- Medaillen ---
+        // Medaillenanzeige
         Label medTitel = new Label("Deine Erfolge:");
         medTitel.setStyle(UIStyles.PROFIL_MED_TITEL);
 
-        HBox medailenGalerie = new HBox(15); // Abstand leicht erhöht für bessere Optik
+        HBox medailenGalerie = new HBox(15);
         medailenGalerie.setAlignment(Pos.CENTER);
-        // Erhöhe die PrefHeight, damit die größeren Bilder Platz haben (z.B. auf 120)
         medailenGalerie.setPrefHeight(120);
 
         for (String pfad : aktuellerSpieler.getMedallien()) {
             try {
                 Image img = new Image(new File(pfad).toURI().toString());
                 ImageView iv = new ImageView(img);
-
-                // --- HIER DIE NEUE GRÖSSE ---
-                iv.setFitHeight(100); // Vorher 50
-                iv.setFitWidth(100);  // Vorher 50
-
+                iv.setFitHeight(100);
+                iv.setFitWidth(100);
                 iv.setPreserveRatio(true);
-                iv.setSmooth(true);    // Macht die Kanten bei der Skalierung schöner
-
+                iv.setSmooth(true);
                 medailenGalerie.getChildren().add(iv);
             } catch (Exception e) {
-                // Falls ein Pfad nicht stimmt, einfach ignorieren
+                // Bilder, die nicht geladen werden können, ignorieren
             }
         }
 
@@ -487,7 +616,19 @@ public class Startbildschirm extends Application {
         return root;
     }
 
-    // Hilfsmethode für die Zeilen im Grid
+    /**
+     * Fügt dem Fortschrittsraster eine Zeile aus:
+     * <ul>
+     *   <li>Label</li>
+     *   <li>ProgressBar</li>
+     *   <li>Prozentanzeige</li>
+     * </ul>
+     *
+     * @param grid Zielraster
+     * @param labelText Text links
+     * @param value Fortschrittswert 0.0 – 1.0
+     * @param row Tabellenzeile
+     */
     private void addProgressRow(GridPane grid, String labelText, double value, int row) {
         Label lbl = new Label(labelText);
         lbl.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
@@ -505,7 +646,13 @@ public class Startbildschirm extends Application {
     }
 
 
-    // ---------- Styling ----------
+// ---------- Styling ----------
+
+    /**
+     * Standard-Button-Design für primäre Aktionen im Spiel.
+     *
+     * @return CSS Style-String
+     */
     private String buttonMain() {
         return "-fx-font-size: 20px;"
                 + "-fx-background-color: #3498db;"
