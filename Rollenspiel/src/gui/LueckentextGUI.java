@@ -89,25 +89,6 @@ public class LueckentextGUI extends BorderPane {
         // Liste der Textfelder für spätere Auswertung
         List<TextField> textfelder = new ArrayList<>(korrekteAntworten.size());
 
-//        for (int i = 0; i < korrekteAntworten.size(); i++) {
-//            TextField tf = new TextField();
-//            tf.setPromptText("Antwort " + (i + 1) + " eingeben...");
-//            // WICHTIG: neutrales Styling, damit es nicht wie Buttons aussieht
-//            tf.setStyle(
-//                    "-fx-font-size: 18px;" +
-//                            "-fx-background-color: white;" +
-//                            "-fx-background-radius: 6;" +
-//                            "-fx-text-fill: -fx-text-base-color;" +
-//                            "-fx-padding: 6 10 6 10;" +
-//                            "-fx-border-color: -fx-box-border;" +
-//                            "-fx-border-radius: 6;"
-//            );
-//            tf.setPrefColumnCount(16);
-//            tf.setMaxWidth(300);
-//
-//            textfelder.add(tf);
-//            eingabenBox.getChildren().add(tf);
-//        }
 
         for (int i = 0; i < frage.getAntworten().size(); i++) {
             TextField tf = new TextField();
