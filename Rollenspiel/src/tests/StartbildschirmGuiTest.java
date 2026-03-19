@@ -27,12 +27,10 @@ public class StartbildschirmGuiTest {
                     .thenReturn(fragen);
 
             Startbildschirm screen = new Startbildschirm();
-            screen.LadeFragenUndOeffneExtraFueTest();
+            screen.ladeFragenUndOeffne(thema);
 
             Assertions.assertNotNull(screen.getFragenController());
             Assertions.assertEquals("Testfrage", screen.getFragenController().getAktuelleFrage().getFrage());
         }
     }
-
-
 }

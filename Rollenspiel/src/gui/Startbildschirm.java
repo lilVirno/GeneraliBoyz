@@ -315,7 +315,7 @@ public class Startbildschirm extends Application {
 
 
     // ---------- Logik aus Swing: Fragen laden ----------
-    private void ladeFragenUndOeffne(Themenbereich thema) {
+    public void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
@@ -329,10 +329,6 @@ public class Startbildschirm extends Application {
 
         this.fragenController = new FragenController(fragen);
         öffneFrageGUI(fragenController.getAktuelleFrage());
-    }
-
-    public void LadeFragenUndOeffneExtraFueTest(){
-        ladeFragenUndOeffne(Themenbereich.SQL);
     }
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
