@@ -9,12 +9,39 @@ import java.sql.Statement;
 import java.util.stream.Collectors;
 import java.io.File;
 
+/**
+ * Verwaltet den Zugriff auf die H2-Datenbank und initialisiert das nötige Schema,
+ * falls die Datenbank noch nicht existiert. Diese Klasse bietet Methoden zum
+ * Herstellen einer Verbindung sowie zum Setup der Datenbankstruktur.
+ */
 public class DatabaseController {
+
+    /**
+     * Dateipfad zur H2-Datenbankdatei (ohne Dateiendung).
+     */
     private static final String DB_PATH = "./Rollenspiel/db/lernspiel";
+
+    /**
+     * JDBC-URL zur Verbindung mit der H2-Datenbank, inklusive MySQL-Kompatibilitätsmodus.
+     */
     private static final String URL = "jdbc:h2:" + DB_PATH + ";MODE=MySQL;DATABASE_TO_UPPER=FALSE";
+
+    /**
+     * Benutzername für die Datenbankverbindung.
+     */
     private static final String USER = "sa";
+
+    /**
+     * Passwort für die Datenbankverbindung. Standardmäßig leer.
+     */
     private static final String PASS = "";
 
+    /**
+     * Stellt eine Verbindung zur H2-Datenbank her. Lädt vorher explizit den H2-Treiber.
+     *
+     * @return eine aktive {@link Connection} zur Datenbank
+     * @throws Exception wenn der H2-Treiber nicht gefunden wird oder keine Verbindung möglich ist
+     */
     public static Connection getConnection() throws Exception {
         try {
             // Zwingt Java, die H2-Treiberklasse zu laden
@@ -25,6 +52,12 @@ public class DatabaseController {
         return DriverManager.getConnection(URL, USER, PASS);
     }
 
+    /**
+     * Überprüft, ob die Datenbank bereits existiert. Falls nicht, wird das erforderliche
+     * Schema aus der Datei {@code schema.sql} geladen und in der H2-Datenbank ausgeführt.
+     *
+     * Gibt Statusmeldungen auf der Konsole aus.
+     */
     public static void setupDatabase() {
         // Prüfen, ob die .mv.db Datei existiert
         File dbFile = new File(DB_PATH + ".mv.db");

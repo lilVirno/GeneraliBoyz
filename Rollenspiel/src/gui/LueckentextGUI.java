@@ -25,19 +25,44 @@ import java.util.List;
 
 import static backend.Frage.countOccurrences;
 
+
+/**
+ * GUI-Komponente für die Darstellung und Bearbeitung einer Lückentextfrage.
+ * Diese Ansicht zeigt eine Frage, ein Eingabefeld sowie einen Prüfbutton
+ * und wertet die Antwort des Spielers aus. Bei korrekter Lösung werden
+ * Punkte vergeben und der Spielerfortschritt aktualisiert.
+ */
+
 public class LueckentextGUI extends BorderPane {
 
+    /**
+     * Referenz auf den Startbildschirm, um zur nächsten Frage navigieren zu können.
+     */
     private final Startbildschirm main;
+
+    /**
+     * Die aktuell angezeigte Frage.
+     */
     private final Frage aktuelleFrage;
+
+    /**
+     * Spieler, der diese Frage beantwortet.
+     */
     private final Spieler aktuellerSpieler;
 
+    /**
+     * Erstellt eine GUI für eine Lückentextfrage.
+     *
+     * @param frage   die anzuzeigende Frage
+     * @param main    Referenz auf den Startbildschirm für Navigation
+     * @param spieler der aktuell spielende Spieler
+     */
     public LueckentextGUI(Frage frage, Startbildschirm main, Spieler spieler) {
 
         this.main = main;
         this.aktuelleFrage = frage;
         this.aktuellerSpieler = spieler;
 
-        // Kopf: Frage
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle(UIStyles.FRAGE_LABEL);
         setTop(frageLabel);
@@ -103,6 +128,12 @@ public class LueckentextGUI extends BorderPane {
         pruefen.setDefaultButton(true);
         pruefen.setStyle(UIStyles.ANTWORT_BUTTON);
 
+
+        /**
+         * Eventhandler für den Prüfbutton.
+         * Vergleicht die Benutzereingabe mit der korrekten Antwort,
+         * zeigt ein Info-Popup und aktualisiert ggf. den Fortschritt des Spielers.
+         */
         pruefen.setOnAction(e -> {
             boolean alleRichtig = true;
 
@@ -136,7 +167,9 @@ public class LueckentextGUI extends BorderPane {
             });
             delay.play();
 
+            // Weiterleitung bei manuellem Schließen des Pop-ups
             alert.setOnHidden(event -> {
+                // verhindert doppeltes Ausführen
                 delay.stop();
                 this.main.oeffneNaechsteFrageOderBeenden();
             });

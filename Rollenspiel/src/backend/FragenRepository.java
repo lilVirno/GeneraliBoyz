@@ -7,13 +7,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Das FragenRepository dient als zentrale Stelle für das Laden, Filtern und
+ * Berechnen von Informationen über Fragen. Es lädt die Fragen aus der Datenbank
+ * oder erstellt eine Mock-Liste, falls noch keine Verbindung besteht.
+ */
 public class FragenRepository {
     /*
     Diese Klasse enthält Mock-Fragen zum Testen bis die Datenbank eingebunden ist
      */
 
+    /**
+     * Liste aller geladenen Fragen. Wird lazy initialisiert.
+     */
     public static List<Frage> alleFragen = null;
 
+    /**
+     * Liefert alle Fragen zurück. Wenn sie noch nicht geladen wurden,
+     * werden sie aus der Datenbank initialisiert.
+     *
+     * @return Liste aller Fragen
+     */
     public static List<Frage> getAlleFragen() {
         if (alleFragen == null) {
             alleFragen = new ArrayList<>();
@@ -22,6 +36,12 @@ public class FragenRepository {
         return alleFragen;
     }
 
+    /**
+     * Liefert alle ungelösten Fragen eines bestimmten Themenbereichs.
+     *
+     * @param thema der gewünschte Themenbereich
+     * @return Liste der ungelösten Fragen
+     */
     public static List<Frage> getUngeloesteFragen(Themenbereich thema) {
         return getAlleFragen().stream()
                 .filter(f -> f.getThemenbereich() == thema)
@@ -29,6 +49,12 @@ public class FragenRepository {
                 .toList();
     }
 
+    /**
+     * Berechnet den Fortschritt eines Themenbereichs als Dezimalwert zwischen 0 und 1.
+     *
+     * @param thema der Themenbereich
+     * @return Fortschrittswert (0.0 bis 1.0)
+     */
     public static double berechneFortschrittFuerThema(Themenbereich thema) {
         List<Frage> alleThemenFragen = getAlleFragen().stream()
                 .filter(f -> f.getThemenbereich() == thema)
@@ -40,7 +66,11 @@ public class FragenRepository {
         return (double) beantwortet / alleThemenFragen.size();
     }
 
-
+    /**
+     * Lädt alle Fragen aus der Datenbank und fügt sie der Liste hinzu.
+     *
+     * @param fragen Liste, die befüllt werden soll
+     */
     private static void initialisiereFragen(List<Frage> fragen) {
         String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name " +
                 "FROM question q " +
@@ -74,6 +104,16 @@ public class FragenRepository {
         }
     }
 
+    /**
+     * Lädt alle Antworten zu einer Frage aus der Datenbank.
+     * Je nach Frage-Typ (GAP oder MC) werden unterschiedliche Tabellen abgefragt.
+     *
+     * @param questionId ID der Frage
+     * @param typeString Fragetyp aus der DB
+     * @param connection aktive DB-Verbindung
+     * @return Liste der geladenen Antworten
+     * @throws SQLException wenn ein DB-Fehler auftritt
+     */
     private static List<Antwort> ladeAntwortenFuerFrage(int questionId, String typeString, Connection connection) throws SQLException {
         List<Antwort> antwortListe = new ArrayList<>();
         String sql;
@@ -99,6 +139,13 @@ public class FragenRepository {
         return antwortListe;
     }
 
+    /**
+     * Wandelt den in der Datenbank gespeicherten Fragetyp in die passende Enum-Kategorie um.
+     *
+     * @param datenbankTyp Fragetyp als String (z. B. "MC")
+     * @return passende Fragenkategorie
+     * @throws IllegalArgumentException bei unbekanntem Typ
+     */
     private static Fragenkategorie mapKategorie(String datenbankTyp) {
         return switch (datenbankTyp) {
             case "MC" -> Fragenkategorie.MULTIPLE_CHOICE;
