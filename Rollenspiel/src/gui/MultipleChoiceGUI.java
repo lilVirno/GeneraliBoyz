@@ -57,7 +57,7 @@ public class MultipleChoiceGUI extends BorderPane {
 
         // Frage oben
         Label frageLabel = new Label(frage.getFrage());
-        frageLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-alignment: center;");
+        frageLabel.setStyle(UIStyles.FRAGE_LABEL);
         frageLabel.setWrapText(true);
         setTop(frageLabel);
         BorderPane.setAlignment(frageLabel, Pos.CENTER);
@@ -77,44 +77,39 @@ public class MultipleChoiceGUI extends BorderPane {
             cb.setFocusTraversable(false);
             cb.setUserData(antwort);
 
-            // Basistyle
-            String baseStyle = "-fx-font-size: 24px; "
-                    + "-fx-text-fill: #333333; "
-                    + "-fx-padding: 10px; "
-                    + "-fx-cursor: hand; ";
+            // 1. Basis-Styling für Text und Abstände
+            String baseStyle = UIStyles.ANTWORT_MC;
 
             cb.setStyle(baseStyle);
 
-            // Lookups für das CheckBox-Quadrat (ggf. erst sichtbar nach Rendering)
-            cb.lookupAll(".box").forEach(node -> node.setStyle(
-                    "-fx-background-radius: 5; "
-                            + "-fx-background-color: white; "
-                            + "-fx-border-color: #cccccc; "
-                            + "-fx-border-radius: 5;"
-            ));
+            // 2. Styling für das Quadrat (die "Box") selbst:
+            // Wir nutzen Lookups erst nach dem Rendern oder setzen ein allgemeines Stylesheet.
+            // Da wir hier im Loop sind, ist die sauberste Methode für "abgerundet & weiß"
+            // das Anwenden auf die Sub-Struktur via CSS-String:
+            cb.lookupAll(".box").forEach(node -> node.setStyle(UIStyles.CHECKBOX_MC));
 
-            // Backup-Styling falls Lookup noch nichts setzt
-            cb.setStyle(cb.getStyle() + "-fx-box-background: white; -fx-box-border: #cccccc;");
+            // Falls das lookup oben noch nichts findet (weil noch nicht angezeigt),
+            // fügen wir das Styling für die Box als "festen" Bestandteil hinzu:
+            cb.setStyle(cb.getStyle() + UIStyles.CHECKBOX_MC_STYLE);
 
-            // Leichtes Skalieren für bessere Sichtbarkeit
-            cb.setScaleX(1.2);
-            cb.setScaleY(1.2);
 
-            // Hover-Effekt
-            cb.setOnMouseEntered(e -> cb.setStyle(cb.getStyle() + "-fx-background-color: #f9f9f9; -fx-background-radius: 8;"));
-            cb.setOnMouseExited(e -> cb.setStyle(cb.getStyle().replace("-fx-background-color: #f9f9f9; -fx-background-radius: 8;", "")));
+
+            // Hover-Effekt (sanftes Grau für den Hintergrund des ganzen Elements)
+            cb.setOnMouseEntered(e -> cb.setStyle(cb.getStyle() + UIStyles.CHECKBOX_MC_HOVER));
+            cb.setOnMouseExited(e -> cb.setStyle(cb.getStyle().replace(UIStyles.CHECKBOX_MC_HOVER_EXIT, "")));
 
             checkBoxes.add(cb);
             antwortBox.getChildren().add(cb);
         }
 
+// Abstand zwischen den Checkboxen in der VBox (antwortBox) einstellen
         antwortBox.setSpacing(15);
         setCenter(antwortBox);
 
         // Button zum Prüfen der Antwort
         Button submitBtn = new Button("Prüfen");
         submitBtn.setDefaultButton(true);
-        submitBtn.setStyle("-fx-font-size: 20px; -fx-background-color: #Ffffff; -fx-text-fill: black; -fx-padding: 10px 44px; -fx-background-radius: 10;");
+        submitBtn.setStyle(UIStyles.ANTWORT_BUTTON);
         submitBtn.setOnAction(e -> pruefeAntwort());
 
         HBox bottomBox = new HBox(submitBtn);

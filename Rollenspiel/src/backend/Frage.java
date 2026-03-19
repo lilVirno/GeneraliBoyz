@@ -10,9 +10,6 @@ import java.util.List;
  * Punktwert und einem Status, ob die Frage bereits gelöst wurde.
  */
 public class Frage {
-    /**
-     * Eindeutige ID der Frage in der Datenbank.
-     */
     private int dbID;
 
     /**
@@ -44,6 +41,9 @@ public class Frage {
      * Punktzahl, die für das richtige Beantworten vergeben wird.
      */
     private int punkte;
+    private List<GapField> gapFields;
+
+
 
     /**
      * Konstruktor zum Erstellen einer vollständigen Frage.
@@ -140,6 +140,14 @@ public class Frage {
     /**
      * @return true, wenn die Frage bereits korrekt gelöst wurde; sonst false
      */
+    public List<GapField> gapFields() {
+        return gapFields;
+    }
+
+    public void setGapField(List<GapField> gapFields) {
+        this.gapFields = gapFields;
+    }
+
     public boolean isGeloest() {
         return geloest;
     }
@@ -173,10 +181,23 @@ public class Frage {
      * @return die richtige Antwort, oder ein Hinweistext falls keine gefunden wurde
      */
     public String getKorrekteAntwort() {
+
+
+
+    public List<String> getKorrekteAntworten() {
         return antworten.stream()
                 .filter(Antwort::isRichtig)
                 .map(Antwort::getAntwort)
-                .findFirst()
-                .orElse("Keine korrekte Antwort hinterlegt.");
+                .toList();
+    }
+
+    // Hilfsmethode: zähle Vorkommen eines Substrings
+    public static int countOccurrences(String text, String token) {
+        int count = 0, idx = 0;
+        while ((idx = text.indexOf(token, idx)) != -1) {
+            count++;
+            idx += token.length();
+        }
+        return count;
     }
 }

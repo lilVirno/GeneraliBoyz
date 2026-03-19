@@ -65,7 +65,7 @@ public class Startbildschirm extends Application {
     /**
      * Primärfarbe für GUI-Elemente.
      */
-    private static final String SOLID_BG_HEX = "#2EA3A3";
+//    private static final String SOLID_BG_HEX = "#2EA3A3";
 
     /**
      * Startszene.
@@ -113,8 +113,12 @@ public class Startbildschirm extends Application {
 
         startScene = new Scene(startRoot, WIDTH, HEIGHT);
 
+        // ... Rest wie gehabt (ThemenScene, ProfilScene)
         VBox themenVBox = createThemenRoot();
         themenScene = new Scene(themenVBox, WIDTH, HEIGHT);
+
+        // Wichtig: ProfilScene hier noch nicht final erstellen,
+        // da der Name erst später kommt!
 
         stage.setTitle("Gamification – Lernspiel");
         stage.setScene(splashScene);
@@ -131,41 +135,41 @@ public class Startbildschirm extends Application {
     private void showNameInputOverlay(StackPane root) {
         // Dunkler Hintergrund für den Fokus
         Region blurBg = new Region();
-        blurBg.setStyle("-fx-background-color: rgba(0,0,0,0.7);");
+        blurBg.setStyle(UIStyles.OVERLAY_BLUR);
 
-        // Eingabefenster
+        // Die Eingabebox
         VBox inputContainer = new VBox(20);
         inputContainer.setAlignment(Pos.CENTER);
         inputContainer.setMaxSize(400, 250);
-        inputContainer.setStyle("-fx-background-color: #2EA3A3; -fx-background-radius: 20; -fx-border-color: white; -fx-border-width: 2;");
+        inputContainer.setStyle(UIStyles.POPUP_CONTAINER);
         inputContainer.setPadding(new Insets(30));
 
         Label frage = new Label("Wie lautet dein Name?");
-        frage.setStyle("-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;");
+        frage.setStyle(UIStyles.FRAGE);
 
         TextField nameField = new TextField();
         nameField.setPromptText("Dein Name...");
-        nameField.setStyle("-fx-font-size: 18px; -fx-background-radius: 10; -fx-padding: 10;");
-
+        nameField.setStyle(UIStyles.TEXT_FIELD);
+        // Erlaubt das Bestätigen durch Drücken der Enter-Taste
         Button confirmBtn = new Button("Bestätigen");
         nameField.setOnAction(e -> confirmBtn.fire());
-        confirmBtn.setStyle(buttonMain());
+        confirmBtn.setStyle(UIStyles.BUTTON_MAIN); // Nutzt dein vorhandenes Button-Styling
 
         inputContainer.getChildren().addAll(frage, nameField, confirmBtn);
 
-        // Overlay hinzufügen
+        // Alles zum Root hinzufügen
         root.getChildren().addAll(blurBg, inputContainer);
 
-        // Logik beim Bestätigen
+        // Logik beim Klicken
         confirmBtn.setOnAction(e -> {
             String name = nameField.getText().trim();
             if (!name.isEmpty()) {
                 aktuellerSpieler.setName(name);
 
-                // Profilseite erst jetzt bauen
+                // Profilseite erst jetzt mit dem richtigen Namen bauen
                 profilScene = new Scene(createProfilRoot(), WIDTH, HEIGHT);
 
-                // Overlay animiert ausblenden
+                // Animation: Overlay ausfaden
                 FadeTransition ft = new FadeTransition(Duration.millis(400), blurBg);
                 FadeTransition ft2 = new FadeTransition(Duration.millis(400), inputContainer);
                 ft.setToValue(0);
@@ -189,7 +193,7 @@ public class Startbildschirm extends Application {
         bg.setSmooth(true);
 
         StackPane root = new StackPane(bg);
-        root.setStyle("-fx-background-color: black;");
+        root.setStyle(UIStyles.BLACK);
 
         root.widthProperty().addListener((obs, oldVal, newVal) -> bg.setFitWidth(newVal.doubleValue()));
         root.heightProperty().addListener((obs, oldVal, newVal) -> bg.setFitHeight(newVal.doubleValue()));
@@ -209,10 +213,10 @@ public class Startbildschirm extends Application {
         bg.setSmooth(true);
 
         Label titel = new Label("Willkommen zum Lernspiel!");
-        titel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;");
+        titel.setStyle(UIStyles.LABEL_TITLE);
 
         Button startButton = new Button("Start");
-        startButton.setStyle(buttonMain());
+        startButton.setStyle(UIStyles.BUTTON_MAIN);
 
         VBox overlayBox = new VBox(12, titel, startButton);
         overlayBox.setPadding(new Insets(16));
@@ -221,7 +225,7 @@ public class Startbildschirm extends Application {
         startButton.setTranslateY(120);
 
         Region overlayBackground = new Region();
-        overlayBackground.setStyle("-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;");
+        overlayBackground.setStyle(UIStyles.OVERLAY_BACKGROUND);
 
         StackPane overlay = new StackPane(overlayBackground, overlayBox);
         overlay.setMaxWidth(420);
@@ -297,7 +301,7 @@ public class Startbildschirm extends Application {
         root.setSpacing(30);
         root.setPadding(new Insets(0, 0, 40, 0)); // Padding unten für Scroll-Freiraum
         root.setBackground(new Background(new BackgroundFill(
-                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+                Color.web(UIStyles.MAIN_COLOR), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
         // --- Header ---
@@ -309,7 +313,7 @@ public class Startbildschirm extends Application {
          */
         Button homeBtn = new Button("🏠 Home");
         homeBtn.setFocusTraversable(false);
-        homeBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        homeBtn.setStyle(UIStyles.NAV_BUTTON);
         AnchorPane.setLeftAnchor(homeBtn, 10.0);
         AnchorPane.setTopAnchor(homeBtn, 0.0);
 
@@ -318,7 +322,7 @@ public class Startbildschirm extends Application {
          */
         Button profilBtn = new Button("👤 Profil");
         profilBtn.setFocusTraversable(false);
-        profilBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        profilBtn.setStyle(UIStyles.NAV_BUTTON);
         AnchorPane.setRightAnchor(profilBtn, 10.0);
         AnchorPane.setTopAnchor(profilBtn, 0.0);
 
@@ -348,9 +352,9 @@ public class Startbildschirm extends Application {
         var titleBox = new VBox(10);
         titleBox.setAlignment(Pos.CENTER);
         var auswahlLabel = new Label("Wähle einen Themenbereich");
-        auswahlLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;");
+        auswahlLabel.setStyle(UIStyles.THEMEN_LABEL);
         var subLabel = new Label("Meistere alle Fragen, um neue Medaillen zu verdienen!");
-        subLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.8);");
+        subLabel.setStyle(UIStyles.LABEL_SUBTITLE);
         titleBox.getChildren().addAll(auswahlLabel, subLabel);
 
         // --- Themen-Grid (FlowPane mit Kacheln) ---
@@ -370,8 +374,8 @@ public class Startbildschirm extends Application {
         var scrollPane = new ScrollPane(flowPane);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-        scrollPane.setPannable(true);
+        scrollPane.setStyle(UIStyles.SCROLL_PANE);
+        scrollPane.setPannable(true); // Erlaubt "Ziehen" mit der Maus wie am Handy
 
         root.getChildren().addAll(header, titleBox, scrollPane);
         return root;
@@ -392,25 +396,12 @@ public class Startbildschirm extends Application {
         btn.setTextAlignment(TextAlignment.CENTER);
         btn.setFocusTraversable(false);
 
-        // Glassmorphism Basis-Stil
-        String baseStyle =
-                "-fx-background-color: rgba(255, 255, 255, 0.15);" +
-                        "-fx-background-radius: 20;" +
-                        "-fx-border-color: rgba(255, 255, 255, 0.3);" +
-                        "-fx-border-radius: 20;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-cursor: hand;";
+        // Standard-Style setzen
+        btn.setStyle(UIStyles.KACHELN);
 
-        btn.setStyle(baseStyle);
-
-        // Hover-Effekt
-        btn.setOnMouseEntered(_ -> btn.setStyle(baseStyle +
-                "-fx-background-color: rgba(255, 255, 255, 0.25); " +
-                "-fx-scale-x: 1.05; -fx-scale-y: 1.05;"));
-        btn.setOnMouseExited(_ -> btn.setStyle(baseStyle));
+        // Hover-Effekte: Wir tauschen den kompletten Style-String gegen die Hover-Variante
+        btn.setOnMouseEntered(_ -> btn.setStyle(UIStyles.KACHELN_HOVER));
+        btn.setOnMouseExited(_ -> btn.setStyle(UIStyles.KACHELN));
 
         // Öffnet Fragen für das Thema
         btn.setOnAction(_ -> ladeFragenUndÖffne(tb));
@@ -461,7 +452,7 @@ public class Startbildschirm extends Application {
         VBox frageRoot = new VBox(20);
         frageRoot.setAlignment(Pos.TOP_CENTER);
         frageRoot.setPadding(new Insets(10, 0, 40, 0));
-        frageRoot.setBackground(new Background(new BackgroundFill(Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY)));
+        frageRoot.setBackground(new Background(new BackgroundFill(Color.web(UIStyles.MAIN_COLOR), CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Header für Abbruch
         AnchorPane header = new AnchorPane();
@@ -469,7 +460,7 @@ public class Startbildschirm extends Application {
 
         Button cancelBtn = new Button("✕ Abbrechen");
         cancelBtn.setFocusTraversable(false);
-        cancelBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        cancelBtn.setStyle(UIStyles.NAV_BUTTON);
         cancelBtn.setOnAction(e -> stage.setScene(themenScene));
 
         AnchorPane.setLeftAnchor(cancelBtn, 10.0);
@@ -488,7 +479,7 @@ public class Startbildschirm extends Application {
             case LUECKENTEXT     -> spezifischesPanel = new LueckentextGUI(frage, this, aktuellerSpieler);
             default -> { return; }
         }
-        spezifischesPanel.setStyle("-fx-background-color: transparent;");
+        spezifischesPanel.setStyle(UIStyles.PANEL_DURCHSICHTIG);
         content.getChildren().add(spezifischesPanel);
 
         frageRoot.getChildren().addAll(header, content);
@@ -533,7 +524,7 @@ public class Startbildschirm extends Application {
         root.setAlignment(Pos.TOP_CENTER);
         root.setPadding(new Insets(10, 20, 0, 20));
         root.setBackground(new Background(new BackgroundFill(
-                Color.web(SOLID_BG_HEX), CornerRadii.EMPTY, Insets.EMPTY
+                Color.web(UIStyles.MAIN_COLOR), CornerRadii.EMPTY, Insets.EMPTY
         )));
 
         // Header
@@ -542,7 +533,7 @@ public class Startbildschirm extends Application {
 
         Button backBtn = new Button("← Zurück");
         backBtn.setFocusTraversable(false);
-        backBtn.setStyle("-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;");
+        backBtn.setStyle(UIStyles.NAV_BUTTON);
         backBtn.setOnAction(e -> stage.setScene(themenScene));
 
         AnchorPane.setLeftAnchor(backBtn, 10.0);
@@ -551,17 +542,17 @@ public class Startbildschirm extends Application {
 
         // Titel
         Label titel = new Label("Hallo, " + aktuellerSpieler.getName());
-        titel.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;");
+        titel.setStyle(UIStyles.PROFIL_TITEL);
 
         // Stats (Level + Punkte)
         HBox generalStats = new HBox(40);
         generalStats.setAlignment(Pos.CENTER);
-        generalStats.setStyle("-fx-background-color: rgba(0,0,0,0.15); -fx-padding: 10; -fx-background-radius: 10;");
+        generalStats.setStyle(UIStyles.PROFIL_STATS);
 
         Label levelLabel = new Label("Rang: " + aktuellerSpieler.getLevel());
         Label punkteLabel = new Label("Punkte: " + aktuellerSpieler.getPunktekonto());
-        levelLabel.setStyle("-fx-text-fill: #f1c40f; -fx-font-weight: bold; -fx-font-size: 16px;");
-        punkteLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        levelLabel.setStyle(UIStyles.PROFIL_LEVEL_LABEL);
+        punkteLabel.setStyle(UIStyles.PROFIL_PUNKTE_LABEL);
 
         generalStats.getChildren().addAll(levelLabel, punkteLabel);
 
@@ -572,7 +563,7 @@ public class Startbildschirm extends Application {
         progressGrid.setAlignment(Pos.CENTER);
         progressGrid.setMaxWidth(500);
         progressGrid.setPadding(new Insets(10));
-        progressGrid.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10;");
+        progressGrid.setStyle(UIStyles.PROFIL_BALKEN);
 
         addProgressRow(progressGrid, "SQL", aktuellerSpieler.getFortschrittSQL(), 0);
         addProgressRow(progressGrid, "UML", aktuellerSpieler.getFortschrittUML(), 1);
@@ -586,16 +577,15 @@ public class Startbildschirm extends Application {
         VBox gesamtBox = new VBox(5);
         gesamtBox.setAlignment(Pos.CENTER);
         Label gesamtLabel = new Label("Gesamtfortschritt");
-        gesamtLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        gesamtLabel.setStyle(UIStyles.PROFIL_GESAMT_BALKEN);
         ProgressBar gesamtBar = new ProgressBar(aktuellerSpieler.getGesamtFortschritt());
         gesamtBar.setPrefWidth(400);
-        gesamtBar.setStyle("-fx-accent: #27ae60;");
-
+        gesamtBar.setStyle("-fx-accent: #27ae60;"); // Ein schönes Grün
         gesamtBox.getChildren().addAll(gesamtLabel, gesamtBar);
 
         // Medaillenanzeige
         Label medTitel = new Label("Deine Erfolge:");
-        medTitel.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+        medTitel.setStyle(UIStyles.PROFIL_MED_TITEL);
 
         HBox medailenGalerie = new HBox(15);
         medailenGalerie.setAlignment(Pos.CENTER);
@@ -617,7 +607,7 @@ public class Startbildschirm extends Application {
 
         if (medailenGalerie.getChildren().isEmpty()) {
             Label leer = new Label("Noch keine Medaillen vorhanden.");
-            leer.setStyle("-fx-text-fill: rgba(255,255,255,0.4);");
+            leer.setStyle(UIStyles.PROFIL_NO_MED);
             medailenGalerie.getChildren().add(leer);
         }
 
@@ -644,7 +634,7 @@ public class Startbildschirm extends Application {
 
         ProgressBar pb = new ProgressBar(value);
         pb.setPrefWidth(250);
-        pb.setStyle("-fx-accent: #3498db;");
+        pb.setStyle("-fx-accent: #3498db;"); // Blau für die Themenbereiche
 
         Label prozentLbl = new Label((int)(value * 100) + "%");
         prozentLbl.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
@@ -670,53 +660,51 @@ public class Startbildschirm extends Application {
                 + "-fx-background-radius: 10;";
     }
 
-    /**
-     * Erzeugt einen modernen Themenbutton mit Hover-Effekt.
-     *
-     * @param text Beschriftung
-     * @return fertiger Button
-     */
-    private Button createThemeButton(String text) {
-        Button btn = new Button(text);
-        btn.setStyle(
-                "-fx-font-size: 18px;"
-                        + "-fx-background-color: rgba(255,255,255,0.90);"
-                        + "-fx-text-fill: #1f2937;"
-                        + "-fx-padding: 10px 20px;"
-                        + "-fx-background-radius: 10;"
-                        + "-fx-border-radius: 10;"
-                        + "-fx-border-color: rgba(255,255,255,0.35);"
-                        + "-fx-border-width: 2;"
-        );
+//    private Button createThemeButton(String text) {
+//        Button btn = new Button(text);
+//        btn.setStyle(
+//                "-fx-font-size: 18px;"
+//                        + "-fx-background-color: rgba(255,255,255,0.90);"
+//                        + "-fx-text-fill: #1f2937;"
+//                        + "-fx-padding: 10px 20px;"
+//                        + "-fx-background-radius: 10;"
+//                        + "-fx-border-radius: 10;"
+//                        + "-fx-border-color: rgba(255,255,255,0.35);"
+//                        + "-fx-border-width: 2;"
+//        );
+//
+//        btn.setOnMouseEntered(e ->
+//                btn.setStyle(
+//                        "-fx-font-size: 18px;"
+//                                + "-fx-background-color: rgba(255,255,255,0.98);"
+//                                + "-fx-text-fill: #111827;"
+//                                + "-fx-padding: 10px 20px;"
+//                                + "-fx-background-radius: 10;"
+//                                + "-fx-border-radius: 10;"
+//                                + "-fx-border-color: rgba(255,255,255,0.6);"
+//                                + "-fx-border-width: 2;"
+//                )
+//        );
+//
+//        btn.setOnMouseExited(e ->
+//                btn.setStyle(
+//                        "-fx-font-size: 18px;"
+//                                + "-fx-background-color: rgba(255,255,255,0.90);"
+//                                + "-fx-text-fill: #1f2937;"
+//                                + "-fx-padding: 10px 20px;"
+//                                + "-fx-background-radius: 10;"
+//                                + "-fx-border-radius: 10;"
+//                                + "-fx-border-color: rgba(255,255,255,0.35);"
+//                                + "-fx-border-width: 2;"
+//                )
+//        );
+//        btn.setFocusTraversable(false);
+//
+//        return btn;
+//    }
 
-        btn.setOnMouseEntered(e ->
-                btn.setStyle(
-                        "-fx-font-size: 18px;"
-                                + "-fx-background-color: rgba(255,255,255,0.98);"
-                                + "-fx-text-fill: #111827;"
-                                + "-fx-padding: 10px 20px;"
-                                + "-fx-background-radius: 10;"
-                                + "-fx-border-radius: 10;"
-                                + "-fx-border-color: rgba(255,255,255,0.6);"
-                                + "-fx-border-width: 2;"
-                )
-        );
-
-        btn.setOnMouseExited(e ->
-                btn.setStyle(
-                        "-fx-font-size: 18px;"
-                                + "-fx-background-color: rgba(255,255,255,0.90);"
-                                + "-fx-text-fill: #1f2937;"
-                                + "-fx-padding: 10px 20px;"
-                                + "-fx-background-radius: 10;"
-                                + "-fx-border-radius: 10;"
-                                + "-fx-border-color: rgba(255,255,255,0.35);"
-                                + "-fx-border-width: 2;"
-                )
-        );
-
-        btn.setFocusTraversable(false);
-
-        return btn;
+    public static void main(String[] args) {
+        DatabaseController.setupDatabase();
+        launch();
     }
 }
