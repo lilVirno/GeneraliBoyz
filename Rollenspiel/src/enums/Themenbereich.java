@@ -40,6 +40,7 @@ public enum Themenbereich {
      * Themenbereich Maschinelles Lernen – grundlegende ML‑Konzepte.
      */
     MASCHINELLESLEARNING("Maschinelles Lernen"),
+    KEINTHEMA("Für Tests")
     ;
 
     /**

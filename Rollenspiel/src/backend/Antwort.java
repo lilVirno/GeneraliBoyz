@@ -62,4 +62,7 @@ public class Antwort {
     public void setAntwort(String antwort) {
         this.antwort = antwort;
     }
+
+
+
 }

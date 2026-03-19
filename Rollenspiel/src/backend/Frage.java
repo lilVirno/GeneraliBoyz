@@ -41,7 +41,6 @@ public class Frage {
      * Punktzahl, die für das richtige Beantworten vergeben wird.
      */
     private int punkte;
-    private List<GapField> gapFields;
 
 
 
@@ -65,6 +64,7 @@ public class Frage {
         this.antworten = antworten;
         this.punkte = punkte;
     }
+    public Frage(){ }
 
     /**
      * @return die eindeutige Datenbank-ID der Frage
@@ -140,14 +140,6 @@ public class Frage {
     /**
      * @return true, wenn die Frage bereits korrekt gelöst wurde; sonst false
      */
-    public List<GapField> gapFields() {
-        return gapFields;
-    }
-
-    public void setGapField(List<GapField> gapFields) {
-        this.gapFields = gapFields;
-    }
-
     public boolean isGeloest() {
         return geloest;
     }

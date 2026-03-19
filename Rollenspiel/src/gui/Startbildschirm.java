@@ -132,6 +132,7 @@ public class Startbildschirm extends Application {
      *
      * @param root Startbildschirm-Root
      */
+
     private void showNameInputOverlay(StackPane root) {
         // Dunkler Hintergrund für den Fokus
         Region blurBg = new Region();
@@ -404,7 +405,7 @@ public class Startbildschirm extends Application {
         btn.setOnMouseExited(_ -> btn.setStyle(UIStyles.KACHELN));
 
         // Öffnet Fragen für das Thema
-        btn.setOnAction(_ -> ladeFragenUndÖffne(tb));
+        btn.setOnAction(_ -> ladeFragenUndOeffne(tb));
 
         return btn;
     }
@@ -418,7 +419,7 @@ public class Startbildschirm extends Application {
      *
      * @param thema Themenbereich, dessen Fragen geladen werden sollen
      */
-    private void ladeFragenUndÖffne(Themenbereich thema) {
+    private void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
@@ -431,7 +432,7 @@ public class Startbildschirm extends Application {
         }
 
         this.fragenController = new FragenController(fragen);
-        öffneFrageGUI(fragenController.getAktuelleFrage());
+        oeffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
 
@@ -448,7 +449,7 @@ public class Startbildschirm extends Application {
      *
      * @param frage Die Frage, deren GUI geöffnet werden soll
      */
-    private void öffneFrageGUI(Frage frage) {
+    private void oeffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
         frageRoot.setAlignment(Pos.TOP_CENTER);
         frageRoot.setPadding(new Insets(10, 0, 40, 0));
@@ -494,7 +495,7 @@ public class Startbildschirm extends Application {
     public void oeffneNaechsteFrageOderBeenden() {
         if (fragenController.hatNaechsteFrage()) {
             fragenController.naechsteFrage();
-            öffneFrageGUI(fragenController.getAktuelleFrage());
+            oeffneFrageGUI(fragenController.getAktuelleFrage());
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
@@ -659,49 +660,6 @@ public class Startbildschirm extends Application {
                 + "-fx-padding: 10px 44px;"
                 + "-fx-background-radius: 10;";
     }
-
-//    private Button createThemeButton(String text) {
-//        Button btn = new Button(text);
-//        btn.setStyle(
-//                "-fx-font-size: 18px;"
-//                        + "-fx-background-color: rgba(255,255,255,0.90);"
-//                        + "-fx-text-fill: #1f2937;"
-//                        + "-fx-padding: 10px 20px;"
-//                        + "-fx-background-radius: 10;"
-//                        + "-fx-border-radius: 10;"
-//                        + "-fx-border-color: rgba(255,255,255,0.35);"
-//                        + "-fx-border-width: 2;"
-//        );
-//
-//        btn.setOnMouseEntered(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.98);"
-//                                + "-fx-text-fill: #111827;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.6);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//
-//        btn.setOnMouseExited(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.90);"
-//                                + "-fx-text-fill: #1f2937;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.35);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//        btn.setFocusTraversable(false);
-//
-//        return btn;
-//    }
 
     public static void main(String[] args) {
         DatabaseController.setupDatabase();
