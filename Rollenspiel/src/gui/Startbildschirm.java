@@ -74,6 +74,10 @@ public class Startbildschirm extends Application {
         runSplashSequence(stage, splashScene, startScene);
     }
 
+    public FragenController getFragenController() {
+        return fragenController;
+    }
+
     private void showNameInputOverlay(StackPane root) {
         // Dunkler Hintergrund für den Fokus
         Region blurBg = new Region();
@@ -303,7 +307,7 @@ public class Startbildschirm extends Application {
         btn.setOnMouseEntered(_ -> btn.setStyle(UIStyles.KACHELN_HOVER));
         btn.setOnMouseExited(_ -> btn.setStyle(UIStyles.KACHELN));
 
-        btn.setOnAction(_ -> ladeFragenUndÖffne(tb));
+        btn.setOnAction(_ -> ladeFragenUndOeffne(tb));
 
         return btn;
     }
@@ -311,7 +315,7 @@ public class Startbildschirm extends Application {
 
 
     // ---------- Logik aus Swing: Fragen laden ----------
-    private void ladeFragenUndÖffne(Themenbereich thema) {
+    private void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
@@ -325,6 +329,10 @@ public class Startbildschirm extends Application {
 
         this.fragenController = new FragenController(fragen);
         öffneFrageGUI(fragenController.getAktuelleFrage());
+    }
+
+    public void LadeFragenUndOeffneExtraFueTest(){
+        ladeFragenUndOeffne(Themenbereich.SQL);
     }
 
     // ---------- Frage-GUI öffnen (JavaFX-Version) ----------
@@ -509,49 +517,6 @@ public class Startbildschirm extends Application {
                 + "-fx-padding: 10px 44px;"
                 + "-fx-background-radius: 10;";
     }
-
-//    private Button createThemeButton(String text) {
-//        Button btn = new Button(text);
-//        btn.setStyle(
-//                "-fx-font-size: 18px;"
-//                        + "-fx-background-color: rgba(255,255,255,0.90);"
-//                        + "-fx-text-fill: #1f2937;"
-//                        + "-fx-padding: 10px 20px;"
-//                        + "-fx-background-radius: 10;"
-//                        + "-fx-border-radius: 10;"
-//                        + "-fx-border-color: rgba(255,255,255,0.35);"
-//                        + "-fx-border-width: 2;"
-//        );
-//
-//        btn.setOnMouseEntered(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.98);"
-//                                + "-fx-text-fill: #111827;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.6);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//
-//        btn.setOnMouseExited(e ->
-//                btn.setStyle(
-//                        "-fx-font-size: 18px;"
-//                                + "-fx-background-color: rgba(255,255,255,0.90);"
-//                                + "-fx-text-fill: #1f2937;"
-//                                + "-fx-padding: 10px 20px;"
-//                                + "-fx-background-radius: 10;"
-//                                + "-fx-border-radius: 10;"
-//                                + "-fx-border-color: rgba(255,255,255,0.35);"
-//                                + "-fx-border-width: 2;"
-//                )
-//        );
-//        btn.setFocusTraversable(false);
-//
-//        return btn;
-//    }
 
     public static void main(String[] args) {
         DatabaseController.setupDatabase();

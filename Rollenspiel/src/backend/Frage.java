@@ -26,6 +26,10 @@ public class Frage {
         this.punkte = punkte;
     }
 
+    public Frage( ) {
+
+    }
+
     public Themenbereich getThemenbereich() {
         return themenbereich;
     }
