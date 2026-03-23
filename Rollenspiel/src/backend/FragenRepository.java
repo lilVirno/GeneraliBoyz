@@ -66,43 +66,6 @@ public class FragenRepository {
         return (double) beantwortet / alleThemenFragen.size();
     }
 
-    /**
-     * Lädt alle Fragen aus der Datenbank und fügt sie der Liste hinzu.
-     *
-     * @param fragen Liste, die befüllt werden soll
-     */
-//    private static void initialisiereFragen(List<Frage> fragen) {
-//        String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name " +
-//                "FROM question q " +
-//                "JOIN Question_Theme qt ON q.question_id = qt.question_id " +
-//                "JOIN theme t ON qt.theme_id = t.theme_id " +
-//                "ORDER BY RAND()";
-//
-//        try (Connection connection = DatabaseController.getConnection();
-//             Statement statement = connection.createStatement();
-//             ResultSet resultSet = statement.executeQuery(sql)) {
-//
-//            while (resultSet.next()) {
-//                int questionId = resultSet.getInt("question_id");
-//                String typeString = resultSet.getString("question_type");
-//                String startText = resultSet.getString("start_text");
-//                int punkte = resultSet.getInt("points");
-//                String themaString = resultSet.getString("thema_name");
-//
-//                Themenbereich themenbereich = Themenbereich.valueOf(themaString);
-//
-//                Fragenkategorie fragenkategorie = mapKategorie(typeString);
-//
-//                List<Antwort> antworten = ladeAntwortenFuerFrage(questionId, typeString, connection);
-//
-//                Frage neueFrage = new Frage(questionId, themenbereich, fragenkategorie, startText, antworten, punkte);
-//
-//                fragen.add(neueFrage);
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Fehler beim Initialisieren der Datenbank-Fragen: " + e.getMessage());
-//        }
-//    }
 
     private static void initialisiereFragen(List<Frage> fragen, String spielerName) {
         // Wir nutzen einen LEFT JOIN auf player_progress für den spezifischen Spieler
