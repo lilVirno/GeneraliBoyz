@@ -3,9 +3,9 @@ package backend;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.io.File;
 
@@ -87,5 +87,115 @@ public class DatabaseController {
             System.err.println("Fehler beim DB-Setup: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void speichereSpielstand(Spieler spieler, List<Integer> geloesteFragenIds) {
+        String upsertPlayer = "MERGE INTO player (name, score, rank_name) KEY(name) VALUES (?, ?, ?)";
+        String getPlayerId = "SELECT player_id FROM player WHERE name = ?";
+        String insertProgress = "MERGE INTO player_progress (player_id, question_id) KEY(player_id, question_id) VALUES (?, ?)";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            // 1. Spieler speichern/aktualisieren
+            try (PreparedStatement pstmt = conn.prepareStatement(upsertPlayer)) {
+                pstmt.setString(1, spieler.getName());
+                pstmt.setInt(2, spieler.getPunktekonto());
+                pstmt.setString(3, spieler.getLevel().toString());
+                pstmt.executeUpdate();
+            }
+
+            // 2. ID holen (sicher via PreparedStatement)
+            int playerId = -1;
+            try (PreparedStatement pstmtId = conn.prepareStatement(getPlayerId)) {
+                pstmtId.setString(1, spieler.getName());
+                try (ResultSet rs = pstmtId.executeQuery()) {
+                    if (rs.next()) playerId = rs.getInt("player_id");
+                }
+            }
+
+            // 3. Fortschritt speichern
+            if (playerId != -1 && geloesteFragenIds != null) {
+                try (PreparedStatement pProgress = conn.prepareStatement(insertProgress)) {
+                    for (Integer qId : geloesteFragenIds) {
+                        pProgress.setInt(1, playerId);
+                        pProgress.setInt(2, qId);
+                        pProgress.addBatch();
+                    }
+                    pProgress.executeBatch();
+                }
+            }
+
+            conn.commit();
+            System.out.println("Spielstand für " + spieler.getName() + " erfolgreich gesichert.");
+        } catch (Exception e) {
+            System.err.println("Fehler beim Speichern: " + e.getMessage());
+            // Bei Fehler: Alles zurückrollen
+            try (Connection conn = getConnection()) { conn.rollback(); } catch (Exception ignored) {}
+        }
+    }
+
+    public static List<String> getAlleSpielerNamen() {
+        List<String> namen = new ArrayList<>();
+        String sql = "SELECT name FROM player";
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                namen.add(rs.getString("name"));
+            }
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abrufen der Namen: " + e.getMessage());
+        }
+        return namen;
+    }
+
+
+    /**
+     * Lädt einen Spieler aus der Datenbank.
+     * @return ein Spieler-Objekt oder null, wenn der Name nicht existiert.
+     */
+    public static Spieler ladeSpieler(String name) {
+        String sql = "SELECT * FROM player WHERE name = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                Spieler s = new Spieler(rs.getString("name"));
+                s.setPunktekonto(rs.getInt("score"));
+
+                // Erst die Fragen für diesen Spieler laden, damit
+                // die Fortschrittsberechnung im nächsten Schritt klappt!
+                FragenRepository.ladeFragenFuerSpieler(name);
+
+                // Jetzt die internen Berechnungen triggern
+                s.setGesamtFortschritt();
+                s.setLevel();
+
+                // Wichtig: Alle Themen-Fortschritte initialisieren
+                for (enums.Themenbereich tb : enums.Themenbereich.values()) {
+                    double fortschritt = FragenRepository.berechneFortschrittFuerThema(tb);
+                    // Da die Felder im Spieler private sind, brauchen wir die Setter:
+                    switch(tb) {
+                        case SQL -> s.setFortschrittSQL(fortschritt);
+                        case UML -> s.setFortschrittUML(fortschritt);
+                        case DATENBANK -> s.setFortschrittDATENBANK(fortschritt);
+                        case PSEUDOCODE -> s.setFortschrittPSEUDOCODE(fortschritt);
+                        case RECHT -> s.setFortschrittRECHT(fortschritt);
+                        case WIRTSCHAFT -> s.setFortschrittWIRTSCHAFT(fortschritt);
+                        case MASCHINELLESLEARNING -> s.setFortschrittMASCHINELLES_LEARNING(fortschritt);
+                    }
+                }
+
+                s.setMedallienArray();
+                return s;
+            }
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden des Spielers: " + e.getMessage());
+        }
+        return null;
     }
 }
