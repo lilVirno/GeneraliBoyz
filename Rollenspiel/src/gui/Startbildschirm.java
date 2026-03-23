@@ -512,7 +512,7 @@ public class Startbildschirm extends Application {
         btn.setOnMouseExited(_ -> btn.setStyle(UIStyles.KACHELN));
 
         // Öffnet Fragen für das Thema
-        btn.setOnAction(_ -> ladeFragenUndÖffne(tb));
+        btn.setOnAction(_ -> ladeFragenUndOeffne(tb));
 
         return btn;
     }
@@ -526,7 +526,7 @@ public class Startbildschirm extends Application {
      *
      * @param thema Themenbereich, dessen Fragen geladen werden sollen
      */
-    private void ladeFragenUndÖffne(Themenbereich thema) {
+    private void ladeFragenUndOeffne(Themenbereich thema) {
         List<Frage> fragen = FragenRepository.getUngeloesteFragen(thema);
 
         if (fragen.isEmpty()) {
@@ -539,7 +539,7 @@ public class Startbildschirm extends Application {
         }
 
         this.fragenController = new FragenController(fragen);
-        öffneFrageGUI(fragenController.getAktuelleFrage());
+        oeffneFrageGUI(fragenController.getAktuelleFrage());
     }
 
 
@@ -556,7 +556,7 @@ public class Startbildschirm extends Application {
      *
      * @param frage Die Frage, deren GUI geöffnet werden soll
      */
-    private void öffneFrageGUI(Frage frage) {
+    private void oeffneFrageGUI(Frage frage) {
         VBox frageRoot = new VBox(20);
         frageRoot.setAlignment(Pos.TOP_CENTER);
         frageRoot.setPadding(new Insets(10, 0, 40, 0));
@@ -602,7 +602,7 @@ public class Startbildschirm extends Application {
     public void oeffneNaechsteFrageOderBeenden() {
         if (fragenController.hatNaechsteFrage()) {
             fragenController.naechsteFrage();
-            öffneFrageGUI(fragenController.getAktuelleFrage());
+            oeffneFrageGUI(fragenController.getAktuelleFrage());
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
@@ -767,7 +767,6 @@ public class Startbildschirm extends Application {
                 + "-fx-padding: 10px 44px;"
                 + "-fx-background-radius: 10;";
     }
-
 
     public static void main(String[] args) {
         DatabaseController.setupDatabase();

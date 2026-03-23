@@ -1,7 +1,6 @@
 package gui;
 
 import backend.Frage;
-import backend.GapField;
 import backend.Spieler;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -9,20 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.animation.PauseTransition;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static backend.Frage.countOccurrences;
 
 
@@ -88,7 +77,6 @@ public class LueckentextGUI extends BorderPane {
 
         // Liste der Textfelder für spätere Auswertung
         List<TextField> textfelder = new ArrayList<>(korrekteAntworten.size());
-
 
         for (int i = 0; i < frage.getAntworten().size(); i++) {
             TextField tf = new TextField();
