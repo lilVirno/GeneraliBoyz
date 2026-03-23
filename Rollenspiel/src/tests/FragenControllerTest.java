@@ -1,15 +1,11 @@
 package tests;
-
 import backend.Antwort;
 import backend.Frage;
 import backend.FragenController;
-import enums.Themenbereich;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static enums.Fragenkategorie.MULTIPLE_CHOICE;
 import static enums.Fragenkategorie.WAHR_FALSCH;
 import static enums.Themenbereich.SQL;

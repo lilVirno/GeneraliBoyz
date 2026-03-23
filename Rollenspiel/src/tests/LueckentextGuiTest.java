@@ -1,14 +1,6 @@
 package tests;
 
-import backend.Antwort;
-import backend.Frage;
-import backend.Spieler;
-import gui.LueckentextGUI;
 import gui.LueckentextPruefer;
-import gui.Startbildschirm;
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
