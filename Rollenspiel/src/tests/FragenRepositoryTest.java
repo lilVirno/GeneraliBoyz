@@ -21,8 +21,8 @@ public class FragenRepositoryTest {
     @Test
     void getAlleFragen_LädtFragenNurEinmal() {
         // Act
-        List<Frage> firstCall = FragenRepository.getAlleFragen();
-        List<Frage> secondCall = FragenRepository.getAlleFragen();
+        List<Frage> firstCall = FragenRepository.alleFragen;
+        List<Frage> secondCall = FragenRepository.alleFragen;
 
         // Assert
         assertSame(firstCall, secondCall, "Beim zweiten Aufruf darf die Liste nicht neu geladen werden.");

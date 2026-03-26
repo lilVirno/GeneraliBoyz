@@ -47,17 +47,17 @@ public class Startbildschirm extends Application {
      * Absoluter Pfad zum Hintergrundbild.
      */
     private static final String ABSOLUTE_PATH =
-            "Rollenspiel/src/resources/Designer.png";
+            "/resources/Designer.png";
 
     /**
      * Breite des Fensters.
      */
-    private static final int WIDTH = 1000;
+    private static final int WIDTH = 1290;
 
     /**
      * Höhe des Fensters.
      */
-    private static final int HEIGHT = 600;
+    private static final int HEIGHT = 860;
 
     /**
      * Dauer des Splash Screens in Sekunden.
@@ -102,7 +102,7 @@ public class Startbildschirm extends Application {
         this.aktuellerSpieler = new Spieler("");
 
         Image bgImage = new Image(
-                new File(ABSOLUTE_PATH).toURI().toString(),
+                getClass().getResourceAsStream("/resources/Designer.png"),
                 WIDTH, HEIGHT, true, true
         );
 
@@ -145,7 +145,7 @@ public class Startbildschirm extends Application {
                 if (response.getText().equals("Speichern & Beenden")) {
                     // Nur speichern, wenn ein Spieler angemeldet ist
                     if (aktuellerSpieler != null && !aktuellerSpieler.getName().isEmpty()) {
-                        List<Integer> geloesteIds = FragenRepository.getAlleFragen().stream()
+                        List<Integer> geloesteIds = FragenRepository.alleFragen.stream()
                                 .filter(Frage::isGeloest)
                                 .map(Frage::getDbID)
                                 .toList();
@@ -470,12 +470,14 @@ public class Startbildschirm extends Application {
         flowPane.setAlignment(Pos.CENTER);
         flowPane.setHgap(25);
         flowPane.setVgap(25);
-        flowPane.setPadding(new Insets(20, 40, 20, 40));
+        flowPane.setPadding(new Insets(80, 100, 20, 100));
 
         // Kacheln für alle Themenbereiche erzeugen
         for (var tb : Themenbereich.values()) {
-            var btn = createThemeTile(tb);
-            flowPane.getChildren().add(btn);
+            if(tb != Themenbereich.KEINTHEMA) {
+                var btn = createThemeTile(tb);
+                flowPane.getChildren().add(btn);
+            }
         }
 
         // ScrollPane, um auch auf kleinen Displays alle Kacheln sehen zu können
@@ -701,15 +703,21 @@ public class Startbildschirm extends Application {
 
         for (String pfad : aktuellerSpieler.getMedallien()) {
             try {
-                Image img = new Image(new File(pfad).toURI().toString());
-                ImageView iv = new ImageView(img);
-                iv.setFitHeight(100);
-                iv.setFitWidth(100);
-                iv.setPreserveRatio(true);
-                iv.setSmooth(true);
-                medailenGalerie.getChildren().add(iv);
+                var inputStream = getClass().getResourceAsStream(pfad);
+
+                if (inputStream != null) {
+                    Image img = new Image(inputStream);
+                    ImageView iv = new ImageView(img);
+                    iv.setFitHeight(100);
+                    iv.setFitWidth(100);
+                    iv.setPreserveRatio(true);
+                    iv.setSmooth(true);
+                    medailenGalerie.getChildren().add(iv);
+                } else {
+                    System.err.println("Bild nicht gefunden: " + pfad);
+                }
             } catch (Exception e) {
-                // Bilder, die nicht geladen werden können, ignorieren
+                e.printStackTrace();
             }
         }
 

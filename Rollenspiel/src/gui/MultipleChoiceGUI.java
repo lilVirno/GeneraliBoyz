@@ -75,6 +75,10 @@ public class MultipleChoiceGUI extends BorderPane {
             cb.setFocusTraversable(false);
             cb.setUserData(antwort);
 
+            cb.setWrapText(true);
+            cb.setMaxWidth(1000);
+            cb.setMinHeight(Region.USE_PREF_SIZE);
+
             // 1. Basis-Styling für Text und Abstände
             String baseStyle = UIStyles.ANTWORT_MC;
 

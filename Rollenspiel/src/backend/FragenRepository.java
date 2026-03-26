@@ -2,6 +2,7 @@ package backend;
 
 import enums.Fragenkategorie;
 import enums.Themenbereich;
+import gui.WahrFalschGUI;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,24 +18,7 @@ public class FragenRepository {
     /**
      * Liste aller geladenen Fragen. Wird lazy initialisiert.
      */
-    public static List<Frage> alleFragen = null;
-
-    /**
-     * Liefert alle Fragen zurück. Wenn sie noch nicht geladen wurden,
-     * werden sie aus der Datenbank initialisiert.
-     *
-     * @return Liste aller Fragen
-     */
-    // Im FragenRepository.java anpassen:
-    public static List<Frage> getAlleFragen() {
-        if (alleFragen == null) {
-            // Falls jemand vergisst, einen Spieler zu laden, initialisieren wir
-            // die Liste leer oder werfen eine Info aus.
-            alleFragen = new ArrayList<>();
-            System.err.println("Warnung: Fragen wurden ohne Spieler-Kontext angefordert.");
-        }
-        return alleFragen;
-    }
+    public static List<Frage> alleFragen = new ArrayList<>();
 
     /**
      * Liefert alle ungelösten Fragen eines bestimmten Themenbereichs.
@@ -43,7 +27,7 @@ public class FragenRepository {
      * @return Liste der ungelösten Fragen
      */
     public static List<Frage> getUngeloesteFragen(Themenbereich thema) {
-        return getAlleFragen().stream()
+        return alleFragen.stream()
                 .filter(f -> f.getThemenbereich() == thema)
                 .filter(f -> !f.isGeloest())
                 .toList();
@@ -56,7 +40,7 @@ public class FragenRepository {
      * @return Fortschrittswert (0.0 bis 1.0)
      */
     public static double berechneFortschrittFuerThema(Themenbereich thema) {
-        List<Frage> alleThemenFragen = getAlleFragen().stream()
+        List<Frage> alleThemenFragen = alleFragen.stream()
                 .filter(f -> f.getThemenbereich() == thema)
                 .toList();
 
@@ -71,41 +55,9 @@ public class FragenRepository {
      *
      * @param fragen Liste, die befüllt werden soll
      */
-//    private static void initialisiereFragen(List<Frage> fragen) {
-//        String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name " +
-//                "FROM question q " +
-//                "JOIN Question_Theme qt ON q.question_id = qt.question_id " +
-//                "JOIN theme t ON qt.theme_id = t.theme_id " +
-//                "ORDER BY RAND()";
-//
-//        try (Connection connection = DatabaseController.getConnection();
-//             Statement statement = connection.createStatement();
-//             ResultSet resultSet = statement.executeQuery(sql)) {
-//
-//            while (resultSet.next()) {
-//                int questionId = resultSet.getInt("question_id");
-//                String typeString = resultSet.getString("question_type");
-//                String startText = resultSet.getString("start_text");
-//                int punkte = resultSet.getInt("points");
-//                String themaString = resultSet.getString("thema_name");
-//
-//                Themenbereich themenbereich = Themenbereich.valueOf(themaString);
-//
-//                Fragenkategorie fragenkategorie = mapKategorie(typeString);
-//
-//                List<Antwort> antworten = ladeAntwortenFuerFrage(questionId, typeString, connection);
-//
-//                Frage neueFrage = new Frage(questionId, themenbereich, fragenkategorie, startText, antworten, punkte);
-//
-//                fragen.add(neueFrage);
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Fehler beim Initialisieren der Datenbank-Fragen: " + e.getMessage());
-//        }
-//    }
 
     private static void initialisiereFragen(List<Frage> fragen, String spielerName) {
-        // Wir nutzen einen LEFT JOIN auf player_progress für den spezifischen Spieler
+        // Euer SQL mit dem JOIN auf den Fortschritt bleibt erhalten
         String sql = "SELECT q.question_id, q.question_type, q.start_text, q.points, t.name AS thema_name, " +
                 "pp.question_id IS NOT NULL AS bereits_geloest " +
                 "FROM question q " +
@@ -122,25 +74,22 @@ public class FragenRepository {
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
-
                 int questionId = resultSet.getInt("question_id");
                 String typeString = resultSet.getString("question_type");
                 String startText = resultSet.getString("start_text");
                 int punkte = resultSet.getInt("points");
                 String themaString = resultSet.getString("thema_name");
+                boolean geloest = resultSet.getBoolean("bereits_geloest");
 
-                Themenbereich themenbereich = Themenbereich.valueOf(themaString);
-
+                // Mapping über die neue Methode im Enum
+                Themenbereich themenbereich = Themenbereich.fromDatabaseName(themaString);
                 Fragenkategorie fragenkategorie = mapKategorie(typeString);
 
+                // Antworten laden (mit der angepassten Logik für das neue Schema)
                 List<Antwort> antworten = ladeAntwortenFuerFrage(questionId, typeString, connection);
-
-                // ... (dein restlicher Code zum Auslesen)
-                boolean geloest = resultSet.getBoolean("bereits_geloest");
 
                 Frage neueFrage = new Frage(questionId, themenbereich, fragenkategorie, startText, antworten, punkte);
 
-                // WICHTIG: Setze den Status der Frage basierend auf der DB
                 if (geloest) {
                     neueFrage.setGeloest();
                 }
@@ -149,31 +98,22 @@ public class FragenRepository {
             }
         } catch (Exception e) {
             System.err.println("Fehler beim Initialisieren: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public static void ladeFragenFuerSpieler(String name) {
-        alleFragen = new ArrayList<>();
-        initialisiereFragen(alleFragen, name);
-    }
-
-    /**
-     * Lädt alle Antworten zu einer Frage aus der Datenbank.
-     * Je nach Frage-Typ (GAP oder MC) werden unterschiedliche Tabellen abgefragt.
-     *
-     * @param questionId ID der Frage
-     * @param typeString Fragetyp aus der DB
-     * @param connection aktive DB-Verbindung
-     * @return Liste der geladenen Antworten
-     * @throws SQLException wenn ein DB-Fehler auftritt
-     */
     private static List<Antwort> ladeAntwortenFuerFrage(int questionId, String typeString, Connection connection) throws SQLException {
         List<Antwort> antwortListe = new ArrayList<>();
         String sql;
 
         if (typeString.equals("GAP")) {
-            sql = "SELECT correct_text FROM gap_field WHERE question_id = ? ORDER BY gap_index ASC";
+            // ANGEPASST: Join auf gap_option, da correct_text in gap_field nicht mehr existiert
+            sql = "SELECT go.option_text FROM gap_field gf " +
+                    "JOIN gap_option go ON gf.gap_id = go.gap_id " +
+                    "WHERE gf.question_id = ? AND go.is_correct = 1 " +
+                    "ORDER BY gf.gap_index ASC";
         } else {
+            // Identisch zum neuen Schema (mc_answer)
             sql = "SELECT option_text, is_correct FROM mc_answer WHERE question_id = ? ORDER BY option_order ASC";
         }
 
@@ -183,13 +123,20 @@ public class FragenRepository {
 
             while (resultSet.next()) {
                 if (typeString.equals("GAP")) {
-                    antwortListe.add(new Antwort(true, resultSet.getString("correct_text")));
+                    // In der neuen Abfrage heißt die Spalte option_text (aus gap_option)
+                    antwortListe.add(new Antwort(true, resultSet.getString("option_text")));
                 } else {
                     antwortListe.add(new Antwort(resultSet.getBoolean("is_correct"), resultSet.getString("option_text")));
                 }
             }
         }
         return antwortListe;
+    }
+
+    public static void ladeFragenFuerSpieler(String name) {
+        alleFragen.clear();
+
+        initialisiereFragen(alleFragen, name);
     }
 
     /**

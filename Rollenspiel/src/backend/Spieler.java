@@ -240,28 +240,28 @@ public class Spieler {
      */
     public void setMedallienArray() {
         if (fortschrittSQL == 1) {
-            medallien.add("Rollenspiel/src/resources/Medaille_SQL_T.png");
+            medallien.add("/resources/Medaille_SQL_T.png");
         }
         if (fortschrittUML == 1) {
-            medallien.add("Rollenspiel/src/resources/Medaille_UML_T.png");
+            medallien.add("/resources/Medaille_UML_T.png");
         }
         if (fortschrittDATENBANK == 1) {
-            medallien.add("Rollenspiel/src/resources/Medaille_DATENBANKENMODELLIERUNG_T.png");
+            medallien.add("/resources/Medaille_DATENBANKENMODELLIERUNG_T.png");
         }
         if (fortschrittPSEUDOCODE == 1) {
-            medallien.add("Rollenspiel/src/resources/Medaille_PROGRAMMIERUNG_PSEUDOCODE_T.png");
+            medallien.add("/resources/Medaille_PROGRAMMIERUNG_PSEUDOCODE_T.png");
         }
         if (fortschrittRECHT == 1){
-            medallien.add("Rollenspiel/src/resources/Medaille_RECHT_T.png");
+            medallien.add("/resources/Medaille_RECHT_T.png");
         }
         if (fortschrittMASCHINELLES_LEARNING == 1){
-            medallien.add("Rollenspiel/src/resources/Medaille_MASCHINELLES_LERNEN_T.png");
+            medallien.add("/resources/Medaille_MASCHINELLES_LERNEN_T.png");
         }
         if (fortschrittWIRTSCHAFT == 1){
-            medallien.add("Rollenspiel/src/resources/Medaille_WIRTSCHAFT_T.png");
+            medallien.add("/resources/Medaille_WIRTSCHAFT_T.png");
         }
         if (gesamtFortschritt == 1){
-            medallien.add("Rollenspiel/src/resources/EndbossMedallie.jpg");
+            medallien.add("/resources/EndbossMedallie.jpg");
         }
     }
 

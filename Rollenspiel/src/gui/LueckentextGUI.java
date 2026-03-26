@@ -54,6 +54,7 @@ public class LueckentextGUI extends BorderPane {
 
         Label frageLabel = new Label(frage.getFrage());
         frageLabel.setStyle(UIStyles.FRAGE_LABEL);
+        frageLabel.setWrapText(true);
         setTop(frageLabel);
         BorderPane.setAlignment(frageLabel, Pos.CENTER);
         BorderPane.setMargin(frageLabel, new Insets(20, 0, 20, 0));
