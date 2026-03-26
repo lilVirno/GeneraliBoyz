@@ -388,6 +388,7 @@ public class Startbildschirm extends Application {
         seq.play();
     }
 
+
     // ---------- Themenbereiche ----------
     /**
      * Erzeugt die komplette Themenauswahl-Seite.
@@ -488,7 +489,6 @@ public class Startbildschirm extends Application {
         root.getChildren().addAll(header, titleBox, scrollPane);
         return root;
     }
-
     /**
      * Erstellt eine einzelne Themen-Kachel als modernen Button
      * mit Glassmorphism-Optik und Hover-Effekten.
@@ -517,8 +517,8 @@ public class Startbildschirm extends Application {
         return btn;
     }
 
-// ---------- Logik aus Swing: Fragen laden ----------
 
+// ---------- Logik aus Swing: Fragen laden ----------
     /**
      * Lädt alle ungelösten Fragen zu einem bestimmten Themenbereich.
      * Falls keine Fragen übrig sind, wird eine Information angezeigt.
@@ -543,8 +543,8 @@ public class Startbildschirm extends Application {
     }
 
 
-// ---------- Frage-GUI öffnen (JavaFX-Version) ----------
 
+// ---------- Frage-GUI öffnen (JavaFX-Version) ----------
     /**
      * Öffnet die GUI für die jeweilige Frage abhängig von ihrer Kategorie.
      * Unterstützte Kategorie-Views:
@@ -757,4 +757,10 @@ public class Startbildschirm extends Application {
         grid.add(pb, 1, row);
         grid.add(prozentLbl, 2, row);
     }
+
+    public static void main(String[] args) {
+        DatabaseController.setupDatabase();
+        launch();
+    }
+
 }
