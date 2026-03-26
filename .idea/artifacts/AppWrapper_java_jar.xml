@@ -1,0 +1,35 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AppWrapper.java:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AppWrapper_java_jar</output-path>
+    <root id="archive" name="AppWrapper.java.jar">
+      <element id="module-output" name="Rollenspiel" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/h2-2.4.240.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/jdk.jsobject.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-4.13.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/objenesis-3.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/opentest4j-1.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/byte-buddy-1.17.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/hamcrest-core-1.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/jfx.incubator.input.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/mockito-core-5.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-jupiter-5.14.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/apiguardian-api-1.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/jfx.incubator.richtext.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/byte-buddy-agent-1.17.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-jupiter-api-5.14.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-jupiter-engine-5.14.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-jupiter-params-5.14.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-platform-engine-1.14.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/mockito-inline-5.2.0-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Rollenspiel/lib/junit-platform-commons-1.14.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
