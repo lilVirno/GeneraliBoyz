@@ -20,8 +20,6 @@ import javafx.util.Duration;
 import java.io.File;
 import java.util.List;
 
-import static backend.DatabaseController.speichereSpielstand;
-
 /**
  * Hauptklasse der JavaFX-Anwendung. Verantwortlich für:
  * <ul>
@@ -758,26 +756,5 @@ public class Startbildschirm extends Application {
         grid.add(lbl, 0, row);
         grid.add(pb, 1, row);
         grid.add(prozentLbl, 2, row);
-    }
-
-
-// ---------- Styling ----------
-
-    /**
-     * Standard-Button-Design für primäre Aktionen im Spiel.
-     *
-     * @return CSS Style-String
-     */
-    private String buttonMain() {
-        return "-fx-font-size: 20px;"
-                + "-fx-background-color: #3498db;"
-                + "-fx-text-fill: white;"
-                + "-fx-padding: 10px 44px;"
-                + "-fx-background-radius: 10;";
-    }
-
-    public static void main(String[] args) {
-        DatabaseController.setupDatabase();
-        launch();
     }
 }

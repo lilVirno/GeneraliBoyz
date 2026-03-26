@@ -9,19 +9,6 @@ public class UIStyles {
     // Hauptfarbe der App (Türkis)
     public static final String MAIN_COLOR = "#2EA3A3";
 
-    // Akzentfarbe (Blau) für Buttons, Highlights
-    public static final String ACCENT_COLOR = "#3498db";
-
-    // Hoverfarbe für Buttons/Elemente
-    public static final String HOVER_COLOR = "#2980b9";
-
-
-    // -------------------------------------------
-    // Hintergründe
-    // -------------------------------------------
-
-    // Haupt-Hintergrundfarbe des Fensters
-    public static final String MAIN_BACKGROUND = "-fx-background-color: " + MAIN_COLOR + ";";
 
     // Dunkler, halbtransparenter Blur-Overlay (z.B. für Popups)
     public static final String OVERLAY_BLUR = "-fx-background-color: rgba(0,0,0,0.7);";
@@ -38,31 +25,10 @@ public class UIStyles {
             "-fx-background-color: rgba(0,0,0,0.28); -fx-background-radius: 12;";
 
 
-    // -------------------------------------------
-    // Buttons
-    // -------------------------------------------
-
-    // Hauptbutton-Stil (Akzentfarbe, groß, abgerundet)
-    public static final String BUTTON_PRIMARY =
-            "-fx-font-size: 20px; -fx-background-color: " + ACCENT_COLOR + "; -fx-text-fill: white; -fx-padding: 10 44; -fx-background-radius: 10; -fx-cursor: hand;";
 
     // Navigation-Buttons (halbtransparent, weißer Text)
     public static final String NAV_BUTTON =
             "-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;";
-
-
-    // -------------------------------------------
-    // Themen-Kacheln (Glassmorphism)
-    // -------------------------------------------
-
-    // Grundstil der Themenkacheln (Glasoptik)
-    public static final String THEME_TILE_BASE =
-            "-fx-background-color: rgba(255, 255, 255, 0.15); -fx-background-radius: 20; -fx-border-color: rgba(255, 255, 255, 0.3); " +
-                    "-fx-border-radius: 20; -fx-border-width: 2; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-cursor: hand;";
-
-    // Hovereffekt für Themenkacheln (heller + Vergrößerung)
-    public static final String THEME_TILE_HOVER =
-            THEME_TILE_BASE + "-fx-background-color: rgba(255, 255, 255, 0.25); -fx-scale-x: 1.05; -fx-scale-y: 1.05;";
 
 
     // -------------------------------------------

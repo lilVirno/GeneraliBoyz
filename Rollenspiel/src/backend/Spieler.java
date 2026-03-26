@@ -194,7 +194,7 @@ public class Spieler {
         // Durchschnitt aller Themen
         this.gesamtFortschritt = (fortschrittSQL + fortschrittUML + fortschrittDATENBANK +
                 fortschrittPSEUDOCODE + fortschrittRECHT +
-                fortschrittWIRTSCHAFT + fortschrittMASCHINELLES_LEARNING) / 7.0;
+                fortschrittWIRTSCHAFT + fortschrittMASCHINELLES_LEARNING) / getMaxPunkte();
     }
 
     /** @return aktueller Punktestand */
@@ -300,24 +300,4 @@ public class Spieler {
         setMedallienArray();
     }
 
-    /**
-     * Aktualisiert den Fortschritt eines bestimmten Themenbereichs,
-     * basierend auf der Anzahl gelöster Fragen.
-     *
-     * @param bereich Themenbereich
-     */
-    private void aktualisiereThemenFortschritt(Themenbereich bereich) {
-        // Berechnung: (Beantwortete Fragen in diesem Bereich) / (Gesamtanzahl Fragen in diesem Bereich)
-        double fortschritt = FragenRepository.berechneFortschrittFuerThema(bereich);
-
-        switch (bereich) {
-            case SQL -> setFortschrittSQL(fortschritt);
-            case UML -> setFortschrittUML(fortschritt);
-            case DATENBANK -> setFortschrittDATENBANK(fortschritt);
-            case PSEUDOCODE -> setFortschrittPSEUDOCODE(fortschritt);
-            case RECHT -> setFortschrittRECHT(fortschritt);
-            case WIRTSCHAFT -> setFortschrittWIRTSCHAFT(fortschritt);
-            case MASCHINELLESLEARNING -> setFortschrittMASCHINELLES_LEARNING(fortschritt);
-        }
-    }
 }
