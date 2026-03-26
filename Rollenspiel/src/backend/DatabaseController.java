@@ -58,12 +58,27 @@ public class DatabaseController {
      *
      * Gibt Statusmeldungen auf der Konsole aus.
      */
+    /**
+     * Überprüft, ob die Datenbank bereits existiert. Falls nicht, wird der Ordner
+     * erstellt, versteckt und das Schema initialisiert.
+     */
     public static void setupDatabase() {
-        // Prüfen, ob die .mv.db Datei existiert
-        File dbFile = new File(DB_PATH + ".mv.db");
+        // 1. Den Basis-Ordner ermitteln (Rollenspiel)
+        File rootDir = new File("./Rollenspiel");
 
+        // Falls der Ordner nicht existiert: Erstellen und SOFORT verstecken
+        if (!rootDir.exists()) {
+            if (rootDir.mkdirs()) {
+                versteckeOrdner(rootDir.toPath());
+            }
+        }
+
+        // 2. Prüfen, ob die .mv.db Datei existiert
+        File dbFile = new File(DB_PATH + ".mv.db");
         if (dbFile.exists()) {
             System.out.println("Datenbank gefunden. Überspringe Initialisierung.");
+            // Sicherheits-Check: Falls der Ordner da ist, aber nicht versteckt, nochmal triggern
+            versteckeOrdner(rootDir.toPath());
             return;
         }
 
@@ -71,21 +86,31 @@ public class DatabaseController {
 
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement();
-             InputStream inputStream = DatabaseController.class.getResourceAsStream("/resources/schema.sql")) {
+             InputStream inputStream = DatabaseController.class.getResourceAsStream("/resources/schema2.sql")) {
 
-            if (inputStream == null) throw new Exception("schema.sql nicht im Resource-Ordner gefunden!");
+            if (inputStream == null) throw new Exception("schema2.sql nicht im Resource-Ordner gefunden!");
 
-            // SQL-Datei einlesen
             String sql = new BufferedReader(new InputStreamReader(inputStream))
                     .lines().collect(Collectors.joining("\n"));
 
-            // H2 kann mehrere Statements ausführen, wenn sie durch ; getrennt sind
             statement.execute(sql);
             System.out.println("Schema erfolgreich importiert.");
 
         } catch (Exception e) {
             System.err.println("Fehler beim DB-Setup: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Setzt das Windows-Attribut für versteckte Dateien/Ordner.
+     */
+    private static void versteckeOrdner(java.nio.file.Path path) {
+        try {
+            // "dos:hidden" funktioniert spezifisch unter Windows
+            java.nio.file.Files.setAttribute(path, "dos:hidden", true, java.nio.file.LinkOption.NOFOLLOW_LINKS);
+        } catch (Exception e) {
+            // Ignorieren auf anderen Betriebssystemen
         }
     }
 

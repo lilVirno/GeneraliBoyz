@@ -184,7 +184,7 @@ public class Frage {
     // Hilfsmethode: zähle Vorkommen eines Substrings
     public static int countOccurrences(String text, String token) {
         int count = 0, idx = 0;
-        while ((idx = text.indexOf(token, idx)) != -1) {
+        while (text != null && (idx = text.indexOf(token, idx)) != -1) {
             count++;
             idx += token.length();
         }
